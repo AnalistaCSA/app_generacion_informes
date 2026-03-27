@@ -1,0 +1,12 @@
+[
+    {
+        "username":"admin",
+        "password":"Csa2026**",
+        "rol":"admin"    
+    },
+    {
+        "username":"usuario1",
+        "password":"Csa2026**",
+        "rol":"user"
+    }
+]
