@@ -1,0 +1,20 @@
+[
+    {
+        "id":1,
+        "nombre":"Camilo",
+        "documento":"1018452161",
+        "telefono":"3212897054"    
+    },
+    {
+        "id":2,
+        "nombre":"Carlos",
+        "documento":"1020563452",
+        "telefono":"3102235458" 
+    },
+    {
+        "id":3,
+        "nombre":"Juan",
+        "documento":"1018478596",
+        "telefono":"3233792007" 
+    }
+]

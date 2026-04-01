@@ -1,20 +1,16 @@
-import socket
-import requests
 
-print(socket.gethostbyname("five.epicollect.net"))
+import os
+import json
 
-API_URL = "https://five.epicollect.net/api/export/entries/csa-ups-instalacion"
 
-headers = {
-    "User-Agent": "Mozilla/5.0"
-}
+with open(r"C:\Users\CSA Área TI\Documents\CSA\Epicollect\Generacion_informes\backend\data\tecnicos.json", "r", encoding="utf-8") as f:
+    tecnicos = json.load(f)
 
-response = requests.get(
-    API_URL,
-    headers=headers,
-    verify=False,
-    timeout=10
-)
-
-print(response.status_code)
-print(response.text[:500])
+for tecnico in tecnicos:
+    
+    if tecnico.get("id") == 1:
+        nombre_tenico = tecnico.get("nombre")
+        print(nombre_tenico)
+        break
+    else:
+        print("El tecnico no existe")
