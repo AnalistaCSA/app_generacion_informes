@@ -1,4 +1,7 @@
 import requests
+from flask import Flask, request, send_file
+from flask_cors import CORS
+import zipfile
 import time
 from io import BytesIO
 from openpyxl import load_workbook
@@ -6,6 +9,8 @@ import urllib3
 from openpyxl.drawing.image import Image
 import os
 import json
+import re
+from tempfile import NamedTemporaryFile
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -17,6 +22,9 @@ with open(r"C:\Users\CSA Área TI\Documents\CSA\Epicollect\Generacion_informes\b
 headers = {
     "User-Agent": "Mozilla/5.0"
 }
+
+app = Flask(__name__)
+CORS(app)
 
 def obtener_datos():
     for intento in range(3):
@@ -48,7 +56,7 @@ def obtener_datos():
     return []
 
 
-def generar_excel():
+def generar_excel(seleccionados=None):
 
     print("Consultando API...")
 
@@ -56,11 +64,17 @@ def generar_excel():
 
     if not datos:
         print("No hay datos, se cancela ejecución")
-        return
+        return None
 
     print(f"Registros: {len(datos)}")
 
+    archivos = []
+
     for item in datos:
+
+        #filtro de seleccion checkbox
+        if seleccionados and item.get("ec5_uuid") not in seleccionados:
+            continue
 
         #FUNCION PARA INSERTAR IMAGENES
         def insertar_imagen(ws, item, campo, celda):
@@ -92,7 +106,7 @@ def generar_excel():
             else:
                 ws[celda]="N/A"
 
-        print("Procesando: ", item.get("tittle"))
+        print("Procesando: ", item.get("title"))
 
         wb = load_workbook(r"C:\Users\CSA Área TI\Documents\CSA\Epicollect\Generacion_informes\formato\formato_informe_instalacion_ups.xlsx")
 
@@ -583,14 +597,65 @@ def generar_excel():
 
         nombre_archivo = f"informe_instalacion_UPS_{titulo}_{sede}.xlsx"
 
-        # limpiar caracteres especiales en nombre
-        for c in ['/', '\\', ':', '*', '?', '"', '<', '>', '|']:
-            nombre_archivo = nombre_archivo.replace(c, "_")
+        # limpiar TODO lo problemático
+        nombre_archivo = re.sub(r'[^\w\-.]', '_', nombre_archivo)
 
-        wb.save(nombre_archivo)
+        # asegurar extensión correcta
+        if not nombre_archivo.lower().endswith(".xlsx"):
+            nombre_archivo += ".xlsx"
+
+        with NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp:
+            wb.save(tmp.name)
+
+            with open(tmp.name, "rb") as f:
+                contenido = f.read()
+
+        archivos.append((nombre_archivo, contenido))
 
         print(f"Generado: {nombre_archivo}")
 
+    # varios archivos
+    zip_buffer = BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for nombre, archivo in archivos:
+            print("NOMBRE FINAL:", nombre_archivo)
+            zipf.writestr(nombre, archivo)
+
+    zip_buffer.seek(0)
+
+    return zip_buffer
+
+
+@app.route("/generar", methods=["POST"])
+def generar():
+
+    data = request.json
+    seleccionados = data.get("ids", [])
+
+    archivo = generar_excel(seleccionados)
+
+    if not archivo:
+        return {"error": "No se generaron archivos"}, 500
+
+    # un solo archivo
+    if isinstance(archivo, tuple):
+        nombre, buffer = archivo
+
+        return send_file(
+            BytesIO(buffer),
+            as_attachment=True,
+            download_name=nombre,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    # varios (zip)
+    return send_file(
+        archivo,
+        as_attachment=True,
+        download_name="informes.zip",
+        mimetype="application/zip"
+    )
 
 if __name__ == "__main__":
-    generar_excel()
+    app.run(debug=True)

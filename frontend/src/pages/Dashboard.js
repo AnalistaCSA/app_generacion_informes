@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerDatos } from "../services/api";
@@ -9,6 +8,7 @@ function Dashboard() {
     const navigate = useNavigate();
     const [datos, setDatos] = useState([]);
     const [seleccionados, setSeleccionados] =useState([]);
+    const [cargando, setCargando] = useState(false);
 
     //se valida datos
     useEffect(() =>{
@@ -36,15 +36,21 @@ function Dashboard() {
     };
 
     //caja de selección
-    const handleSelection =(item) =>{
-        const id = item.ec5_uuid
-        const existe = seleccionados.includes(id);
+    const handleSelection = (item) => {
+        const id = item.ec5_uuid;
 
-        if(existe){
-            setSeleccionados(seleccionados.filter(i => i!== id));
-        } else{
-            setSeleccionados([...seleccionados, id]);
+        if (!id) {
+            console.error("ID inválido:", item);
+            return;
         }
+
+        setSeleccionados(prev => {
+            if (prev.includes(id)) {
+                return prev.filter(i => i !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
     };
 
     //traer nombre de tecnico
@@ -53,6 +59,86 @@ function Dashboard() {
         const tecnico = tecnicos.find(t => t.id === id);
         return tecnico ? tecnico.nombre : "No encontrado"
     }
+
+    //boton descargar todos los archivos
+    const descargarTodos = async () => {
+        setCargando(true);
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/generar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ids: [] })
+            });
+
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+
+            const contentDisposition = response.headers.get("Content-Disposition");
+            let nombreArchivo = "informes.zip";
+
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="(.+)"/);
+                if (match) {
+                    nombreArchivo = match[1];
+                }
+            }
+
+            a.download = nombreArchivo;
+            a.click();
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setCargando(false); // 🔥 clave
+        }
+    };
+
+    //boton descargar seleccionados
+    const descargarSeleccionados = async () => {
+        setCargando(true);
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/generar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ids: seleccionados })
+            });
+
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+
+            const contentDisposition = response.headers.get("Content-Disposition");
+            let nombreArchivo = "informes.zip";
+
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="(.+)"/);
+                if (match) {
+                    nombreArchivo = match[1];
+                }
+            }
+
+            a.download = nombreArchivo;
+            a.click();
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setCargando(false); // 🔥 clave
+        }
+    };
+
+    
 
     return (
     <div>
@@ -84,21 +170,36 @@ function Dashboard() {
                 <tbody>
                     {datos.map((item, index) => (
                         <tr key={index}>
-                            <td><input type="checkbox" onChange={()=>handleSelection(item)}/></td>
+                            <td><input 
+                                type="checkbox" 
+                                checked={seleccionados.includes(item.ec5_uuid)}
+                                onChange={() => handleSelection(item)}
+                            /></td>
                             <td>{item.title}</td>
                             <td>{item.created_at.split("T")[0]}</td>
                             <td>{item["7_CIUDAD"]}</td>
                             <td>{item["8_DEPARTAMENTO"]}</td>
-                            <td>{item["63_CAPACIDAD_UPS_KVA"]+" KVA"}</td>
+                            <td>{item["66_CAPACIDAD_UPS_KVA"]+" KVA"}</td>
                             <td>{traerIdTecnico(item["11_CODIGO_TECNICO"])}</td>
                             <td>{item["5_NOMBRE_SEDE"]}</td>
                             <td>{item["6_DIRECCION"]}</td>
-                        </tr>
+                        </tr>                        
                     ))}
                 </tbody>
             </table>
         )}
-        <button onClick={()=> console.log(seleccionados)}>Ver Seleccionados</button>
+        <button onClick={descargarTodos} disabled={cargando}>
+            {cargando ? "Generando..." : "Descargar Todos"}
+        </button>
+
+        <button onClick={descargarSeleccionados} disabled={cargando}>
+            {cargando ? "Generando..." : "Descargar Seleccionados"}
+        </button>
+        {cargando && (
+            <p style={{ color: "blue", fontWeight: "bold", marginTop: "10px" }}>
+                ⏳ Generando y descargando informes, por favor espera...
+            </p>
+        )}
     </div>
     );
 };
