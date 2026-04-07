@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerDatos } from "../services/api";
 import tecnicos from "../data/tecnicos.json";
+import "../styles/dashboardPages.css";
 
 function Dashboard() {
 
@@ -141,60 +142,72 @@ function Dashboard() {
     
 
     return (
-    <div>
-        <h1>Dashboard</h1>
-        <p>Bienvenido al sistema de informes UPS</p>
+    <div class="contenedor-Dashboard">
+        <div class="contenedor-boton">
+            <button class="boton-cierre-sesion" onClick={logout}>Cerrar Sesión</button>
+        </div>
+        <h1 class="titulo-Dashboard" >INFORMES DE INSTALACIÓN</h1>
+        <p class="texto-dashboard">Bienvenido al sistema para generacion de informes UPS via Epicollect</p>
+        <a href="https://five.epicollect.net/project/csa-ups-instalacion/data" target="_blank" rel="noopener noreferrer" class="link_epicollect">
+            Ir a Epicollect
+        </a>
+        
 
-        <button onClick={logout}>Cerrar Sesión</button>
+        <h2 class="titulo2-Dashboard">Listado de Informes</h2>
 
-        <h2>Listado de Informes</h2>
+        <div class="contenedor-tabla">
+            {datos.length === 0 ? (
+                <p>Cargando datos...</p>
+            ) : (
+                <table border="1" cellPadding="10" style={{ marginTop: "20px", borderCollapse: "collapse" }}>
+                    <thead class="casilla-titulos">
+                        <tr>
+                            <th class="columna-seleccion">Selección</th>
+                            <th>Título</th>
+                            <th>Fecha</th>
+                            <th>Ciudad</th>
+                            <th>Departamento</th>
+                            <th>Capacidad UPS</th>
+                            <th class="columna-tecnico">Técnico</th>
+                            <th>Nombre Sede</th>
+                            <th class="columna-direccion">Dirección</th>
+                        </tr>
+                    </thead>
 
-        {datos.length === 0 ? (
-            <p>Cargando datos...</p>
-        ) : (
-            <table border="1" cellPadding="10" style={{ marginTop: "20px", borderCollapse: "collapse" }}>
-                <thead>
-                    <tr>
-                        <th>Selección</th>
-                        <th>Título</th>
-                        <th>Fecha</th>
-                        <th>Ciudad</th>
-                        <th>Departamento</th>
-                        <th>Capacidad UPS</th>
-                        <th>Técnico</th>
-                        <th>Nombre Sede</th>
-                        <th>Dirección</th>
-                    </tr>
-                </thead>
+                    <tbody>
+                        {datos.map((item, index) => (
+                            <tr key={index}>
+                                <td>                                    
+                                    <input
+                                        class="checkbox"
+                                        type="checkbox" 
+                                        checked={seleccionados.includes(item.ec5_uuid)}
+                                        onChange={() => handleSelection(item)}
+                                    />                                    
+                                </td>
+                                <td>{item.title}</td>
+                                <td>{item.created_at.split("T")[0]}</td>
+                                <td>{item["7_CIUDAD"]}</td>
+                                <td>{item["8_DEPARTAMENTO"]}</td>
+                                <td>{item["66_CAPACIDAD_UPS_KVA"]+" KVA"}</td>
+                                <td>{traerIdTecnico(item["11_CODIGO_TECNICO"])}</td>
+                                <td>{item["5_NOMBRE_SEDE"]}</td>
+                                <td>{item["6_DIRECCION"]}</td>
+                            </tr>                        
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </div>
+        <div class="contenedor-botones-descarga">
+            <button class="boton-descarga" onClick={descargarTodos} disabled={cargando}>
+                {cargando ? "Generando..." : "Descargar Todos"}
+            </button>
 
-                <tbody>
-                    {datos.map((item, index) => (
-                        <tr key={index}>
-                            <td><input 
-                                type="checkbox" 
-                                checked={seleccionados.includes(item.ec5_uuid)}
-                                onChange={() => handleSelection(item)}
-                            /></td>
-                            <td>{item.title}</td>
-                            <td>{item.created_at.split("T")[0]}</td>
-                            <td>{item["7_CIUDAD"]}</td>
-                            <td>{item["8_DEPARTAMENTO"]}</td>
-                            <td>{item["66_CAPACIDAD_UPS_KVA"]+" KVA"}</td>
-                            <td>{traerIdTecnico(item["11_CODIGO_TECNICO"])}</td>
-                            <td>{item["5_NOMBRE_SEDE"]}</td>
-                            <td>{item["6_DIRECCION"]}</td>
-                        </tr>                        
-                    ))}
-                </tbody>
-            </table>
-        )}
-        <button onClick={descargarTodos} disabled={cargando}>
-            {cargando ? "Generando..." : "Descargar Todos"}
-        </button>
-
-        <button onClick={descargarSeleccionados} disabled={cargando}>
-            {cargando ? "Generando..." : "Descargar Seleccionados"}
-        </button>
+            <button class="boton-descarga" onClick={descargarSeleccionados} disabled={cargando}>
+                {cargando ? "Generando..." : "Descargar Seleccionados"}
+            </button>
+        </div>
         {cargando && (
             <p style={{ color: "blue", fontWeight: "bold", marginTop: "10px" }}>
                 ⏳ Generando y descargando informes, por favor espera...
