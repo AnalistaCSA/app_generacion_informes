@@ -16,7 +16,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 API_URL = "https://five.epicollect.net/api/export/entries/csa-ups-instalacion?form_ref=fff4776480684a35b8765ec74e7c14f8_69c54ba08a99d"
 
-with open("backend/data/tecnicos.json", "r", encoding="utf-8") as f:
+with open(r"C:\Users\CSA Área TI\Documents\CSA\Epicollect\Generacion_informes\backend\data\tecnicos.json", "r", encoding="utf-8") as f:
     tecnicos = json.load(f)
 
 headers = {
