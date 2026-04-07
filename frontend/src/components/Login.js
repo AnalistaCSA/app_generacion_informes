@@ -27,7 +27,13 @@ function Login({ onLogin} ){
             <br/>
             <br/>
             <input type="text" placeholder="Usuario" value={username} onChange={(e) => setUsername(e.target.value)}/>
-            <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)}/>
+            <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                    handleLogin();
+                    }
+                }}
+            />
             <br/>
             <br/>
             <button class="boton-sesion" onClick={handleLogin}>Ingresar</button>

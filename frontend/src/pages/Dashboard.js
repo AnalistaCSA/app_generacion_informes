@@ -209,7 +209,7 @@ function Dashboard() {
             </button>
         </div>
         {cargando && (
-            <p style={{ color: "blue", fontWeight: "bold", marginTop: "10px" }}>
+            <p class="texto-carga">
                 ⏳ Generando y descargando informes, por favor espera...
             </p>
         )}

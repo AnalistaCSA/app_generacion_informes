@@ -136,3 +136,10 @@ thead th {
     top: 0;
     z-index: 1;
 }
+
+.texto-carga{
+    color: #e40a27;
+    font-weight: 700;
+    margin-top: 10px;
+    text-align: center;
+}
