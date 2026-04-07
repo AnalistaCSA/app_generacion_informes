@@ -108,7 +108,7 @@ def generar_excel(seleccionados=None):
 
         print("Procesando: ", item.get("title"))
 
-        wb = load_workbook(r"C:\Users\CSA Área TI\Documents\CSA\Epicollect\Generacion_informes\formato\formato_informe_instalacion_ups.xlsx")
+        wb = load_workbook("formato/formato_informe_instalacion_ups.xlsx")
 
         dt_generales = wb["DATOS GENERALES"]
         evi_instalacion = wb["EVIDENCIA DE LA INSTALACIÓN"]
