@@ -619,8 +619,12 @@ def generar_excel(seleccionados=None):
 
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
         for nombre, archivo in archivos:
-            archivo.seek(0)
-            zipf.writestr(nombre, archivo.read())
+            
+            if isinstance(archivo, BytesIO):
+                archivo.seek(0)
+                zipf.writestr(nombre, archivo.read())
+            else:
+                zipf.writestr(nombre, archivo)
 
     zip_buffer.seek(0)
 
