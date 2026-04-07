@@ -589,7 +589,7 @@ def generar_excel(seleccionados=None):
         if item.get("296_NOVEDADES_UPS") == "OTRA":
             novedades["E39"] = item.get("297_OTRA_OBSERVACION")
         else:
-            novedades["E38"] = item.get("296_NOVEDADES_UPS")
+            novedades["E39"] = item.get("296_NOVEDADES_UPS")
 
         #Generacion de archivos
         titulo = item.get("title", "sin_titulo")
