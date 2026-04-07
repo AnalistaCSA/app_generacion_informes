@@ -619,8 +619,8 @@ def generar_excel(seleccionados=None):
 
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
         for nombre, archivo in archivos:
-            print("NOMBRE FINAL:", nombre_archivo)
-            zipf.writestr(nombre, archivo)
+            archivo.seek(0)
+            zipf.writestr(nombre, archivo.read())
 
     zip_buffer.seek(0)
 
