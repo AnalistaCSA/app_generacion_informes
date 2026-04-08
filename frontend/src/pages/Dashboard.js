@@ -10,6 +10,9 @@ function Dashboard() {
     const [datos, setDatos] = useState([]);
     const [seleccionados, setSeleccionados] =useState([]);
     const [cargando, setCargando] = useState(false);
+    const [busqueda, setBusqueda] = useState("");
+    const [filtroTecnico, setFiltroTecnico] = useState("")
+
 
     //se valida datos
     useEffect(() =>{
@@ -139,6 +142,24 @@ function Dashboard() {
         }
     };
 
+    //filtro y cuadro de busqueda
+    const datosFiltrados = datos.filter(item => {
+        const texto = busqueda.toLowerCase();
+
+        const coincideBusqueda =
+            item.title?.toLowerCase().includes(texto) ||
+            item["2_ID_SEDE"]?.toLowerCase().includes(texto) ||
+            item["5_NOMBRE_SEDE"]?.toLowerCase().includes(texto) ||
+            item["69_NUMERO_DE_SERIE_D"]?.toLowerCase().includes(texto) ||
+            item["6_DIRECCION"]?.toLowerCase().includes(texto);
+
+        const nombreTecnico = traerIdTecnico(item["11_CODIGO_TECNICO"]);
+
+        const coincideTecnico =
+            filtroTecnico === "" || nombreTecnico === filtroTecnico;
+
+        return coincideBusqueda && coincideTecnico;
+    });
     
 
     return (
@@ -155,6 +176,29 @@ function Dashboard() {
 
         <h2 class="titulo2-Dashboard">Listado de Informes</h2>
 
+        <div className="contenedor-filtros">
+            <input
+                type="text"
+                placeholder="Buscar por sede, s/n de ups o dirección..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                className="input-busqueda"
+            />
+
+            <select
+                value={filtroTecnico}
+                onChange={(e) => setFiltroTecnico(e.target.value)}
+                className="select-filtro"
+            >
+                <option value="">Todos los técnicos</option>
+                {tecnicos.map(t => (
+                    <option key={t.id} value={t.nombre}>
+                        {t.nombre}
+                    </option>
+                ))}
+            </select>
+        </div>
+
         <div class="contenedor-tabla">
             {datos.length === 0 ? (
                 <p>Cargando datos...</p>
@@ -163,11 +207,12 @@ function Dashboard() {
                     <thead class="casilla-titulos">
                         <tr>
                             <th class="columna-seleccion">Selección</th>
-                            <th>Título</th>
+                            <th>ID Sede</th>
                             <th>Fecha</th>
                             <th>Ciudad</th>
                             <th>Departamento</th>
                             <th>Capacidad UPS</th>
+                            <th>S/N de UPS</th>
                             <th class="columna-tecnico">Técnico</th>
                             <th>Nombre Sede</th>
                             <th class="columna-direccion">Dirección</th>
@@ -175,7 +220,7 @@ function Dashboard() {
                     </thead>
 
                     <tbody>
-                        {datos.map((item, index) => (
+                        {datosFiltrados.map((item, index) => (
                             <tr key={index}>
                                 <td>                                    
                                     <input
@@ -190,6 +235,7 @@ function Dashboard() {
                                 <td>{item["7_CIUDAD"]}</td>
                                 <td>{item["8_DEPARTAMENTO"]}</td>
                                 <td>{item["66_CAPACIDAD_UPS_KVA"]+" KVA"}</td>
+                                <td>{item["69_NUMERO_DE_SERIE_D"]}</td>
                                 <td>{traerIdTecnico(item["11_CODIGO_TECNICO"])}</td>
                                 <td>{item["5_NOMBRE_SEDE"]}</td>
                                 <td>{item["6_DIRECCION"]}</td>
