@@ -170,7 +170,7 @@ function Dashboard() {
         <h1 class="titulo-Dashboard" >INFORMES DE INSTALACIÓN</h1>
         <p class="texto-dashboard">Bienvenido al sistema para generacion de informes UPS via Epicollect</p>
         <a href="https://five.epicollect.net/project/csa-ups-instalacion/data" target="_blank" rel="noopener noreferrer" class="link_epicollect">
-            Ver base en a Epicollect
+            Ver base en Epicollect
         </a>
         
 
