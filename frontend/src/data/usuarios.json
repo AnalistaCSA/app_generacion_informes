@@ -1,12 +1,17 @@
 [
     {
         "username":"admin",
-        "password":"Csa2026**",
+        "password":"Cs4TI2026**",
         "rol":"admin"    
     },
     {
-        "username":"usuario1",
-        "password":"Csa2026**",
+        "username":"analistaservicios@csapowertec.com",
+        "password":"Csa2026*",
+        "rol":"user"    
+    },
+    {
+        "username":"lt.soporte@csapowertec.com",
+        "password":"Csa2026*",
         "rol":"user"
     }
 ]
