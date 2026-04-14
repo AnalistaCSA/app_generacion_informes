@@ -236,7 +236,7 @@ def generar_excel(seleccionados=None):
         # *************** hojas mediciones entradas y salidas ***************
         if item.get("70_TIPO_DE_UPS") == "MONOFASICA":
             #Fotos y datos entrada
-            med_entradas_ups["C2"] == item.get("70_TIPO_DE_UPS")
+            med_entradas_ups["C2"] = item.get("70_TIPO_DE_UPS")
             dt_generales["E33"] = item.get("72_CALIBRE_ENTRADA_F")
             dt_generales["I33"] = item.get("73_CALIBRE_ENTRADA_N")
             dt_generales["K33"] = item.get("74_CALIBRE_ENTRADA_T")
@@ -255,7 +255,7 @@ def generar_excel(seleccionados=None):
             med_entradas_ups["A86"] = item.get("88_OBERVACIONES_ENTR")
 
             #Fotos y datos salida
-            med_salida_ups["C2"] == item.get("70_TIPO_DE_UPS")
+            med_salida_ups["C2"] = item.get("70_TIPO_DE_UPS")
             dt_generales["R33"] = item.get("89_CALIBRE_SALIDA_FA")
             dt_generales["T33"] = item.get("90_CALIBRE_SALIDA_NE")
             dt_generales["V33"] = item.get("91_CALIBRE_SALIDA_TI")
@@ -309,7 +309,7 @@ def generar_excel(seleccionados=None):
 
         elif item.get("70_TIPO_DE_UPS") == "BIFASICA":
             #Fotos y datos entrada
-            med_entradas_ups["C2"] == item.get("70_TIPO_DE_UPS")
+            med_entradas_ups["C2"] = item.get("70_TIPO_DE_UPS")
             dt_generales["E33"] = item.get("108_CALIBRE_ENTRADA_")
             dt_generales["K33"] = item.get("109_CALIBRE_ENTRADA_")
             dt_generales["E34"] = item.get("110_COLOR_MARQUILLAD")
@@ -326,7 +326,7 @@ def generar_excel(seleccionados=None):
             med_entradas_ups["A86"] = item.get("121_OBERVACIONES_ENT")
 
             #fotos y datos salida
-            med_salida_ups["C2"] == item.get("70_TIPO_DE_UPS")
+            med_salida_ups["C2"] = item.get("70_TIPO_DE_UPS")
             dt_generales["R33"] = item.get("122_CALIBRE_SALIDA_F")
             dt_generales["T33"] = item.get("123_CALIBRE_SALIDA_N")
             dt_generales["V33"] = item.get("124_CALIBRE_SALIDA_T")
@@ -382,7 +382,7 @@ def generar_excel(seleccionados=None):
 
         else:
             #fotos y datos entrada
-            med_entradas_ups["C2"] == item.get("70_TIPO_DE_UPS")
+            med_entradas_ups["C2"] = item.get("70_TIPO_DE_UPS")
             dt_generales["E33"] = item.get("148_CALIBRE_ENTRADA_")
             dt_generales["I33"] = item.get("149_CALIBRE_ENTRADA_")
             dt_generales["K33"] = item.get("150_CALIBRE_ENTRADA_")
@@ -417,7 +417,7 @@ def generar_excel(seleccionados=None):
             med_entradas_ups["A86"] = item.get("180_OBERVACIONES_ENT")
 
             #fotos y datos salida
-            med_salida_ups["C2"] == item.get("70_TIPO_DE_UPS")
+            med_salida_ups["C2"] = item.get("70_TIPO_DE_UPS")
             dt_generales["R33"] = item.get("181_CALIBRE_SALIDA_F")
             dt_generales["T33"] = item.get("182_CALIBRE_SALIDA_N")
             dt_generales["V33"] = item.get("183_CALIBRE_SALIDA_T")
