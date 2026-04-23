@@ -175,9 +175,6 @@ def generar_excel(seleccionados=None):
             dt_generales["C28"]="X"
         else: dt_generales["F28"]="X"
         if item.get("26_ALARMAS_ACTIVAS")=="SI":
-            dt_generales["C28"]="X"
-        else: dt_generales["F28"]="X"
-        if item.get("26_ALARMAS_ACTIVAS")=="SI":
             dt_generales["C29"]="X"
             dt_generales["C30"]=item.get("27_INDIQUE_CODIGO_DE")
         else: dt_generales["F29"]="X"
