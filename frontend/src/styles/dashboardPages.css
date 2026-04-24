@@ -164,3 +164,10 @@ thead th {
     margin-top: 10px;
     text-align: center;
 }
+
+.total-informes{
+    font-Weight: bold;
+    margin-Top: 10px;
+    font-Size: 18px;
+    color: #333;
+}

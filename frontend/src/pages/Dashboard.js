@@ -188,7 +188,7 @@ function Dashboard() {
         
 
         <h2 class="titulo2-Dashboard">Listado de Informes</h2>
-
+        
         <div className="contenedor-filtros">
             <input
                 type="text"
@@ -296,6 +296,9 @@ function Dashboard() {
                 {cargando ? "Generando..." : "Descargar Seleccionados"}
             </button>
         </div>
+        <p class="total-informes">
+            Total de informes: {datosFiltrados.length}
+        </p>
         {cargando && (
             <p class="texto-carga">
                 ⏳ Generando y descargando informes, por favor espera...

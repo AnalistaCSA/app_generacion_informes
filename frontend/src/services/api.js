@@ -1,13 +1,13 @@
-const API_URL = "https://five.epicollect.net/api/export/entries/csa-ups-instalacion?form_ref=fff4776480684a35b8765ec74e7c14f8_69c54ba08a99d";
+const API_URL = "https://app-generacion-informes.onrender.com/datos";
 
 export const obtenerDatos = async () => {
     try {
         const response = await fetch(API_URL);
         const data = await response.json();
 
-        console.log("DATA REAL:", data);
+        console.log("DATOS:", data.length);
 
-        return data.data.entries || [];
+        return data;
     } catch (error) {
         console.error("ERROR:", error);
         return [];
