@@ -688,6 +688,11 @@ def generar():
         mimetype="application/zip"
     )
 
+@app.route("/datos", methods=["GET"])
+def datos():
+    datos = obtener_datos()
+    return datos
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
