@@ -31,28 +31,51 @@ def obtener_datos():
         try:
             print(f"Intento {intento + 1} de conexión")
 
-            response =requests.get(
-                API_URL,
+            # 🔹 Primera página
+            response = requests.get(
+                f"{API_URL}&page=1",
                 headers=headers,
                 verify=False,
                 timeout=10
             )
 
             response.raise_for_status()
-
             data = response.json()
 
             if "data" not in data or "entries" not in data["data"]:
-                print("Respuesta invalida de la API")
+                print("Respuesta inválida de la API")
                 return []
-            
-            return data["data"]["entries"]
-        
+
+            todos = data["data"]["entries"]
+
+            total_paginas = data.get("meta", {}).get("last_page", 1)
+
+            print(f"Total páginas: {total_paginas}")
+
+            # 🔹 Traer las demás páginas
+            for page in range(2, total_paginas + 1):
+                print(f"Consultando página {page}")
+
+                response = requests.get(
+                    f"{API_URL}&page={page}",
+                    headers=headers,
+                    verify=False,
+                    timeout=10
+                )
+
+                response.raise_for_status()
+                data_page = response.json()
+
+                if "data" in data_page and "entries" in data_page["data"]:
+                    todos.extend(data_page["data"]["entries"])
+
+            return todos
+
         except requests.exceptions.RequestException as e:
-            print(f"Error en intento {intento + 1} {e}")
+            print(f"Error en intento {intento + 1}: {e}")
             time.sleep(2)
 
-    print("No se pudo encontrar a la API")
+    print("No se pudo conectar a la API")
     return []
 
 
