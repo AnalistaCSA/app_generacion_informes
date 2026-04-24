@@ -12,6 +12,8 @@ function Dashboard() {
     const [cargando, setCargando] = useState(false);
     const [busqueda, setBusqueda] = useState("");
     const [filtroTecnico, setFiltroTecnico] = useState("")
+    const [paginaActual, setPaginaActual] = useState(1);
+    const registrosPorPagina = 50;
 
 
     //se valida datos
@@ -32,6 +34,10 @@ function Dashboard() {
 
         cargarDatos();
     }, []);
+
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, filtroTecnico]);
 
     // Cerrar Sesión
     const logout =() =>{
@@ -145,7 +151,7 @@ function Dashboard() {
     //filtro y cuadro de busqueda
     const datosFiltrados = datos.filter(item => {
         const texto = busqueda.toLowerCase();
-
+        
         const coincideBusqueda =
             item.title?.toLowerCase().includes(texto) ||
             item["2_ID_SEDE"]?.toLowerCase().includes(texto) ||
@@ -160,6 +166,13 @@ function Dashboard() {
 
         return coincideBusqueda && coincideTecnico;
     });
+
+    const indiceInicio = (paginaActual - 1) * registrosPorPagina;
+    const indiceFin = paginaActual * registrosPorPagina;
+
+    const datosPaginados = datosFiltrados.slice(indiceInicio, indiceFin);
+
+    const totalPaginas = Math.ceil(datosFiltrados.length / registrosPorPagina);
     
 
     return (
@@ -220,7 +233,7 @@ function Dashboard() {
                     </thead>
 
                     <tbody>
-                        {datosFiltrados.map((item, index) => (
+                        {datosPaginados.map((item, index) => (
                             <tr key={index}>
                                 <td>                                    
                                     <input
@@ -242,8 +255,38 @@ function Dashboard() {
                             </tr>                        
                         ))}
                     </tbody>
-                </table>
+                </table>              
             )}
+            
+            <div style={{ marginTop: "20px" }}>
+                <button 
+                    onClick={() => setPaginaActual(paginaActual - 1)} 
+                    disabled={paginaActual === 1}
+                >
+                    Anterior
+                </button>
+
+                {/* 🔢 Botones numerados */}
+                {Array.from({ length: totalPaginas }, (_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setPaginaActual(i + 1)}
+                        style={{
+                            margin: "0 5px",
+                            fontWeight: paginaActual === i + 1 ? "bold" : "normal"
+                        }}
+                    >
+                        {i + 1}
+                    </button>
+                ))}
+
+                <button 
+                    onClick={() => setPaginaActual(paginaActual + 1)} 
+                    disabled={paginaActual === totalPaginas}
+                >
+                    Siguiente
+                </button>
+            </div>
         </div>
         <div class="contenedor-botones-descarga">
             <button class="boton-descarga" onClick={descargarTodos} disabled={cargando}>

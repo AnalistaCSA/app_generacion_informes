@@ -76,6 +76,7 @@ def obtener_datos():
             time.sleep(2)
 
     print("No se pudo conectar a la API")
+    
     return []
 
 
