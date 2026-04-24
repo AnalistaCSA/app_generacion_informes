@@ -256,37 +256,36 @@ function Dashboard() {
                         ))}
                     </tbody>
                 </table>              
-            )}
-            
-            <div style={{ marginTop: "20px" }}>
-                <button 
-                    onClick={() => setPaginaActual(paginaActual - 1)} 
-                    disabled={paginaActual === 1}
-                >
-                    Anterior
-                </button>
+            )} 
+        </div>
+        <div style={{ marginTop: "20px" }}>
+            <button 
+                onClick={() => setPaginaActual(paginaActual - 1)} 
+                disabled={paginaActual === 1}
+            >
+                Anterior
+            </button>
 
-                {/* 🔢 Botones numerados */}
-                {Array.from({ length: totalPaginas }, (_, i) => (
-                    <button
-                        key={i}
-                        onClick={() => setPaginaActual(i + 1)}
-                        style={{
-                            margin: "0 5px",
-                            fontWeight: paginaActual === i + 1 ? "bold" : "normal"
-                        }}
-                    >
-                        {i + 1}
-                    </button>
-                ))}
-
-                <button 
-                    onClick={() => setPaginaActual(paginaActual + 1)} 
-                    disabled={paginaActual === totalPaginas}
+            {/*Botones numerados */}
+            {Array.from({ length: totalPaginas }, (_, i) => (
+                <button
+                    key={i}
+                    onClick={() => setPaginaActual(i + 1)}
+                    style={{
+                        margin: "0 5px",
+                        fontWeight: paginaActual === i + 1 ? "bold" : "normal"
+                    }}
                 >
-                    Siguiente
+                    {i + 1}
                 </button>
-            </div>
+            ))}
+
+            <button 
+                onClick={() => setPaginaActual(paginaActual + 1)} 
+                disabled={paginaActual === totalPaginas}
+            >
+                Siguiente
+            </button>
         </div>
         <div class="contenedor-botones-descarga">
             <button class="boton-descarga" onClick={descargarTodos} disabled={cargando}>
