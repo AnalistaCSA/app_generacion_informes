@@ -7,7 +7,7 @@ export const obtenerDatos = async () => {
 
         console.log("DATA REAL:", data);
 
-        return data.data.entries || []; // 👈 AQUÍ ESTÁ LA CLAVE
+        return data.data.entries || [];
     } catch (error) {
         console.error("ERROR:", error);
         return [];
