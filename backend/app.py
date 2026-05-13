@@ -546,9 +546,9 @@ def generar_excel(seleccionados=None):
             display_ups["E3"] = "Display Condición Soporte en Modo Baterías"
             insertar_imagen(display_ups, item, "273_DISPLAY_CONDICIO", "E4")
             display_ups["G3"] = "Display Potencia de Salida Pantalla 1/5"
-            insertar_imagen(display_ups, item, "273_DISPLAY_CONDICIO", "G4")
+            insertar_imagen(display_ups, item, "274_DISPLAY_POTENCIA", "G4")
             display_ups["A21"] = "Display Datos de Salida Pantalla 2/5"
-            insertar_imagen(display_ups, item, "273_DISPLAY_CONDICIO", "A22")
+            insertar_imagen(display_ups, item, "275_DISPLAY_DATOS_DE", "A22")
             display_ups["C21"] = "Display Datos de Batería Pantalla 3/5"
             insertar_imagen(display_ups, item, "276_DISPLAY_DATOS_DE", "C22")
             display_ups["E21"] = "Display Datos de Bypass Pantalla 4/5"
