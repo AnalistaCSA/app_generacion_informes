@@ -10,6 +10,7 @@ from openpyxl.drawing.image import Image
 import os
 import json
 import re
+import traceback
 from tempfile import NamedTemporaryFile
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -661,32 +662,42 @@ def generar_excel(seleccionados=None):
 @app.route("/generar", methods=["POST"])
 def generar():
 
-    data = request.json
-    seleccionados = data.get("ids", [])
+    try:
+        data = request.json
+        seleccionados = data.get("ids", [])
 
-    archivo = generar_excel(seleccionados)
+        archivo = generar_excel(seleccionados)
 
-    if not archivo:
-        return {"error": "No se generaron archivos"}, 500
+        if not archivo:
+            return {"error": "No se generaron archivos"}, 500
 
-    # un solo archivo
-    if isinstance(archivo, tuple):
-        nombre, buffer = archivo
+        # un solo archivo
+        if isinstance(archivo, tuple):
+            nombre, buffer = archivo
 
+            return send_file(
+                BytesIO(buffer),
+                as_attachment=True,
+                download_name=nombre,
+                mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
+        # varios (zip)
         return send_file(
-            BytesIO(buffer),
+            archivo,
             as_attachment=True,
-            download_name=nombre,
-            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            download_name="informes.zip",
+            mimetype="application/zip"
         )
+    
+    except Exception as e:
+        
+        print("=========== ERROR GENERANDO INFORME ===========")
+        print(traceback.format_exc())
 
-    # varios (zip)
-    return send_file(
-        archivo,
-        as_attachment=True,
-        download_name="informes.zip",
-        mimetype="application/zip"
-    )
+        return {
+            "error": str(e)
+        }, 500
 
 @app.route("/datos", methods=["GET"])
 def datos():
