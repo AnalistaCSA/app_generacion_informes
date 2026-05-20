@@ -27,6 +27,9 @@ headers = {
 }
 
 app = Flask(__name__)
+
+print("VERSION NUEVA ACTIVADA")
+
 CORS(app)
 
 def obtener_datos():
@@ -719,37 +722,13 @@ def generar():
 @app.route("/datos", methods=["GET"])
 def datos():
 
-    datos = obtener_datos()
+    print("ENTRO A /DATOS")
 
-    if not datos:
-        return jsonify([])
-
-    print(type(datos))
-
-    if isinstance(datos, list):
-        print("Cantidad:", len(datos))
-
-    datos_livianos = []
-
-    for item in datos:
-
-        datos_livianos.append({
-            "ec5_uuid": item.get("ec5_uuid"),
-            "title": item.get("title"),
-            "created_at": item.get("created_at"),
-            "7_CIUDAD": item.get("7_CIUDAD"),
-            "8_DEPARTAMENTO": item.get("8_DEPARTAMENTO"),
-            "66_CAPACIDAD_UPS_KVA": item.get("66_CAPACIDAD_UPS_KVA"),
-            "69_NUMERO_DE_SERIE_D": item.get("69_NUMERO_DE_SERIE_D"),
-            "11_CODIGO_TECNICO": item.get("11_CODIGO_TECNICO"),
-            "5_NOMBRE_SEDE": item.get("5_NOMBRE_SEDE"),
-            "6_DIRECCION": item.get("6_DIRECCION"),
-            "2_ID_SEDE": item.get("2_ID_SEDE")
-        })
-
-    print("Datos livianos enviados:", len(datos_livianos))
-
-    return jsonify(datos_livianos)
+    return jsonify([
+        {
+            "test": "funciona"
+        }
+    ])
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
