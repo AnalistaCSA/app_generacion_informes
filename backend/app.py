@@ -632,8 +632,10 @@ def generar_excel(seleccionados=None):
             #Generacion de archivos
             titulo = item.get("title", "sin_titulo")
             sede = item.get("5_NOMBRE_SEDE", "sin_sede")
+            equipo = item.get("66_CAPACIDAD_UPS_KVA")
+            sn = item.get("69_NUMERO_DE_SERIE_D")
 
-            nombre_archivo = f"informe_instalacion_UPS_{titulo}_{sede}.xlsx"
+            nombre_archivo = f"informe_instalacion_UPS_{titulo}_{sede}_{equipo}_KVA_SN_{sn}.xlsx"
 
             # limpiar TODO lo problemático
             nombre_archivo = re.sub(r'[^\w\-.]', '_', nombre_archivo)
