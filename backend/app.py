@@ -52,8 +52,8 @@ def obtener_datos():
             response.raise_for_status()
             data = response.json()
 
-            print("JSON RECIBIDO:")
-            print(json.dumps(data, indent=2)[:3000])
+            print("JSON RECIBIDO:", flush=True)
+            print(json.dumps(data, indent=2)[:3000], flush=True)
 
             if "data" not in data or "entries" not in data["data"]:
                 print("Respuesta inválida de la API")
@@ -725,10 +725,10 @@ def datos():
 
     datos = obtener_datos()
 
-    print("TIPO:", type(datos))
+    print("TIPO:", type(datos), flush=True)
 
     if isinstance(datos, list):
-        print("CANTIDAD:", len(datos))
+        print("CANTIDAD:", len(datos), flush=True)
 
     return jsonify(datos)
 
