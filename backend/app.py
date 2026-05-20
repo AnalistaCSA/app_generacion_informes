@@ -49,6 +49,9 @@ def obtener_datos():
             response.raise_for_status()
             data = response.json()
 
+            print("JSON RECIBIDO:")
+            print(json.dumps(data, indent=2)[:3000])
+
             if "data" not in data or "entries" not in data["data"]:
                 print("Respuesta inválida de la API")
                 return []
