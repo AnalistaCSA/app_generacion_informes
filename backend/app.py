@@ -40,16 +40,46 @@ def obtener_datos():
     global cache_datos
     global ultima_actualizacion
 
-    # cache 5 minutos
+    # Cache por 5 minutos
     if time.time() - ultima_actualizacion < 300 and cache_datos:
         print("Usando cache", flush=True)
         return cache_datos
 
     try:
 
-        todos = []
+        print("Consultando primera página...", flush=True)
 
-        for page in range(1, 7):
+        response = requests.get(
+            f"{API_URL}&page=1",
+            headers=headers,
+            verify=False,
+            timeout=20
+        )
+
+        print("STATUS:", response.status_code, flush=True)
+
+        if response.status_code != 200:
+            print("Error consultando primera página", flush=True)
+
+            # devolver cache anterior si existe
+            if cache_datos:
+                return cache_datos
+
+            return []
+
+        data = response.json()
+
+        total_paginas = data.get("meta", {}).get("last_page", 1)
+
+        print(f"TOTAL PAGINAS: {total_paginas}", flush=True)
+
+        todos = data.get("data", {}).get("entries", [])
+
+        # Espera antes de continuar
+        time.sleep(4)
+
+        # Consultar páginas restantes
+        for page in range(2, total_paginas + 1):
 
             print(f"Consultando página {page}", flush=True)
 
@@ -64,7 +94,7 @@ def obtener_datos():
 
             if response.status_code != 200:
                 print(f"Error página {page}", flush=True)
-                break
+                continue
 
             data = response.json()
 
@@ -72,8 +102,7 @@ def obtener_datos():
 
             todos.extend(entries)
 
-            # MUY IMPORTANTE
-            time.sleep(3)
+            time.sleep(4)
 
         cache_datos = todos
         ultima_actualizacion = time.time()
@@ -81,6 +110,17 @@ def obtener_datos():
         print(f"TOTAL REGISTROS: {len(todos)}", flush=True)
 
         return todos
+
+    except Exception as e:
+
+        print("ERROR GENERAL:", str(e), flush=True)
+
+        # si falla todo, usar cache viejo
+        if cache_datos:
+            print("Usando cache anterior", flush=True)
+            return cache_datos
+
+        return []
 
     except Exception as e:
 
