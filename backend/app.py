@@ -12,6 +12,7 @@ import json
 import re
 import traceback
 from tempfile import NamedTemporaryFile
+from flask import jsonify
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -709,8 +710,15 @@ def generar():
 
 @app.route("/datos", methods=["GET"])
 def datos():
+
     datos = obtener_datos()
-    return datos
+
+    print(type(datos))
+
+    if isinstance(datos, list):
+        print("Cantidad:", len(datos))
+
+    return jsonify(datos)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
