@@ -100,6 +100,7 @@ def generar_excel(seleccionados=None):
         print("Consultando API...")
 
         datos = obtener_datos()
+        
 
         if not datos:
             print("No hay datos, se cancela ejecución")
@@ -722,13 +723,14 @@ def generar():
 @app.route("/datos", methods=["GET"])
 def datos():
 
-    print("ENTRO A /DATOS")
+    datos = obtener_datos()
 
-    return jsonify([
-        {
-            "test": "funciona"
-        }
-    ])
+    print("TIPO:", type(datos))
+
+    if isinstance(datos, list):
+        print("CANTIDAD:", len(datos))
+
+    return jsonify(datos)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
