@@ -32,65 +32,64 @@ print("VERSION NUEVA ACTIVADA")
 
 CORS(app)
 
-def obtener_datos():
-    for intento in range(3):
-        try:
-            print(f"Intento {intento + 1} de conexión")
+cache_datos = []
+ultima_actualizacion = 0
 
-            # 🔹 Primera página
+def obtener_datos():
+
+    global cache_datos
+    global ultima_actualizacion
+
+    # cache 5 minutos
+    if time.time() - ultima_actualizacion < 300 and cache_datos:
+        print("Usando cache", flush=True)
+        return cache_datos
+
+    try:
+
+        todos = []
+
+        for page in range(1, 7):
+
+            print(f"Consultando página {page}", flush=True)
+
             response = requests.get(
-                f"{API_URL}&page=1",
+                f"{API_URL}&page={page}",
                 headers=headers,
                 verify=False,
-                timeout=10
+                timeout=20
             )
 
-            print("STATUS:", response.status_code)
-            print("URL:", response.url)
-            print("RESPUESTA:", response.text[:1000])
+            print("STATUS:", response.status_code, flush=True)
 
             response.raise_for_status()
+
             data = response.json()
 
-            print("JSON RECIBIDO:", flush=True)
-            print(json.dumps(data, indent=2)[:3000], flush=True)
+            entries = data.get("data", {}).get("entries", [])
 
-            if "data" not in data or "entries" not in data["data"]:
-                print("Respuesta inválida de la API")
-                return []
+            todos.extend(entries)
 
-            todos = data["data"]["entries"]
+            # MUY IMPORTANTE
+            time.sleep(1)
 
-            total_paginas = data.get("meta", {}).get("last_page", 1)
+        cache_datos = todos
+        ultima_actualizacion = time.time()
 
-            print(f"Total páginas: {total_paginas}")
+        print(f"TOTAL REGISTROS: {len(todos)}", flush=True)
 
-            # 🔹 Traer las demás páginas
-            for page in range(2, total_paginas + 1):
-                print(f"Consultando página {page}")
+        return todos
 
-                response = requests.get(
-                    f"{API_URL}&page={page}",
-                    headers=headers,
-                    verify=False,
-                    timeout=10
-                )
+    except Exception as e:
 
-                response.raise_for_status()
-                data_page = response.json()
+        print("ERROR API:", e, flush=True)
 
-                if "data" in data_page and "entries" in data_page["data"]:
-                    todos.extend(data_page["data"]["entries"])
+        # devolver cache viejo si existe
+        if cache_datos:
+            print("Usando cache anterior", flush=True)
+            return cache_datos
 
-            return todos
-
-        except requests.exceptions.RequestException as e:
-            print(f"Error en intento {intento + 1}: {e}")
-            time.sleep(2)
-
-    print("No se pudo conectar a la API")
-    
-    return []
+        return []
 
 
 def generar_excel(seleccionados=None):
@@ -725,12 +724,25 @@ def datos():
 
     datos = obtener_datos()
 
-    print("TIPO:", type(datos), flush=True)
+    datos_livianos = []
 
-    if isinstance(datos, list):
-        print("CANTIDAD:", len(datos), flush=True)
+    for item in datos:
 
-    return jsonify(datos)
+        datos_livianos.append({
+            "ec5_uuid": item.get("ec5_uuid"),
+            "title": item.get("title"),
+            "created_at": item.get("created_at"),
+            "7_CIUDAD": item.get("7_CIUDAD"),
+            "8_DEPARTAMENTO": item.get("8_DEPARTAMENTO"),
+            "66_CAPACIDAD_UPS_KVA": item.get("66_CAPACIDAD_UPS_KVA"),
+            "69_NUMERO_DE_SERIE_D": item.get("69_NUMERO_DE_SERIE_D"),
+            "11_CODIGO_TECNICO": item.get("11_CODIGO_TECNICO"),
+            "5_NOMBRE_SEDE": item.get("5_NOMBRE_SEDE"),
+            "6_DIRECCION": item.get("6_DIRECCION"),
+            "2_ID_SEDE": item.get("2_ID_SEDE")
+        })
+
+    return jsonify(datos_livianos)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
