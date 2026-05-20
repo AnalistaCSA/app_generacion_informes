@@ -42,6 +42,10 @@ def obtener_datos():
                 timeout=10
             )
 
+            print("STATUS:", response.status_code)
+            print("URL:", response.url)
+            print("RESPUESTA:", response.text[:1000])
+
             response.raise_for_status()
             data = response.json()
 
