@@ -40,28 +40,28 @@ def obtener_datos():
     global cache_datos
     global ultima_actualizacion
 
-    # Cache por 5 minutos
+    # cache 1 hora
     if time.time() - ultima_actualizacion < 3600 and cache_datos:
         print("Usando cache", flush=True)
         return cache_datos
 
     try:
 
-        print("Consultando primera página...", flush=True)
+        print("Consultando API...", flush=True)
 
         response = requests.get(
-            f"{API_URL}&page=1",
+            f"{API_URL}&page=1&per_page=300",
             headers=headers,
             verify=False,
-            timeout=20
+            timeout=30
         )
 
         print("STATUS:", response.status_code, flush=True)
 
         if response.status_code != 200:
-            print("Error consultando primera página", flush=True)
 
-            # devolver cache anterior si existe
+            print("ERROR API", flush=True)
+
             if cache_datos:
                 return cache_datos
 
@@ -69,40 +69,7 @@ def obtener_datos():
 
         data = response.json()
 
-        total_paginas = data.get("meta", {}).get("last_page", 1)
-
-        print(f"TOTAL PAGINAS: {total_paginas}", flush=True)
-
         todos = data.get("data", {}).get("entries", [])
-
-        # Espera antes de continuar
-        time.sleep(4)
-
-        # Consultar páginas restantes
-        for page in range(2, total_paginas + 1):
-
-            print(f"Consultando página {page}", flush=True)
-
-            response = requests.get(
-                f"{API_URL}&page={page}",
-                headers=headers,
-                verify=False,
-                timeout=20
-            )
-
-            print("STATUS:", response.status_code, flush=True)
-
-            if response.status_code != 200:
-                print(f"Error página {page}", flush=True)
-                continue
-
-            data = response.json()
-
-            entries = data.get("data", {}).get("entries", [])
-
-            todos.extend(entries)
-
-            time.sleep(6)
 
         cache_datos = todos
         ultima_actualizacion = time.time()
@@ -113,22 +80,9 @@ def obtener_datos():
 
     except Exception as e:
 
-        print("ERROR GENERAL:", str(e), flush=True)
+        print("ERROR:", str(e), flush=True)
 
-        # si falla todo, usar cache viejo
         if cache_datos:
-            print("Usando cache anterior", flush=True)
-            return cache_datos
-
-        return []
-
-    except Exception as e:
-
-        print("ERROR API:", e, flush=True)
-
-        # devolver cache viejo si existe
-        if cache_datos:
-            print("Usando cache anterior", flush=True)
             return cache_datos
 
         return []
