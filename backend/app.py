@@ -41,7 +41,7 @@ def obtener_datos():
     global ultima_actualizacion
 
     # Cache por 5 minutos
-    if time.time() - ultima_actualizacion < 300 and cache_datos:
+    if time.time() - ultima_actualizacion < 3600 and cache_datos:
         print("Usando cache", flush=True)
         return cache_datos
 
@@ -102,7 +102,7 @@ def obtener_datos():
 
             todos.extend(entries)
 
-            time.sleep(4)
+            time.sleep(6)
 
         cache_datos = todos
         ultima_actualizacion = time.time()
