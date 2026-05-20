@@ -62,7 +62,9 @@ def obtener_datos():
 
             print("STATUS:", response.status_code, flush=True)
 
-            response.raise_for_status()
+            if response.status_code != 200:
+                print(f"Error página {page}", flush=True)
+                break
 
             data = response.json()
 
@@ -71,7 +73,7 @@ def obtener_datos():
             todos.extend(entries)
 
             # MUY IMPORTANTE
-            time.sleep(1)
+            time.sleep(3)
 
         cache_datos = todos
         ultima_actualizacion = time.time()
