@@ -87,9 +87,10 @@ def obtener_datos():
 
         for page in range(2, total_paginas + 1):
 
+            pagina_cargada = False
             intentos = 0
 
-            while intentos < 3:
+            while not pagina_cargada and intentos < 10:
 
                 try:
 
@@ -104,16 +105,21 @@ def obtener_datos():
 
                     print(f"STATUS PAGINA {page}: {response.status_code}", flush=True)
 
+                    # RATE LIMIT
                     if response.status_code == 429:
-
-                        print("RATE LIMIT - esperando...", flush=True)
-
-                        time.sleep(10)
 
                         intentos += 1
 
+                        print(
+                            f"RATE LIMIT PAGINA {page} - intento {intentos}",
+                            flush=True
+                        )
+
+                        time.sleep(20)
+
                         continue
 
+                    # ERROR GENERAL
                     if response.status_code != 200:
 
                         print(f"ERROR PAGINA {page}", flush=True)
@@ -124,22 +130,32 @@ def obtener_datos():
 
                     entries = data.get("data", {}).get("entries", [])
 
-                    print(f"REGISTROS PAGINA {page}: {len(entries)}", flush=True)
+                    print(
+                        f"REGISTROS PAGINA {page}: {len(entries)}",
+                        flush=True
+                    )
 
                     todos.extend(entries)
 
-                    # pausa normal
-                    time.sleep(5)
+                    print(
+                        f"TOTAL ACUMULADO: {len(todos)}",
+                        flush=True
+                    )
 
-                    break
+                    pagina_cargada = True
+
+                    time.sleep(5)
 
                 except Exception as e:
 
-                    print(f"ERROR PAGINA {page}: {e}", flush=True)
-
                     intentos += 1
 
-                    time.sleep(5)
+                    print(
+                        f"ERROR PAGINA {page} - intento {intentos}: {e}",
+                        flush=True
+                    )
+
+                    time.sleep(10)
 
         cache_datos = todos
         ultima_actualizacion = time.time()
