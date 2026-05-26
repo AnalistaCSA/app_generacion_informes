@@ -47,20 +47,24 @@ def obtener_datos():
 
     try:
 
-        print("Consultando API...", flush=True)
+        todos = []
+
+        # =========================
+        # PRIMERA PAGINA
+        # =========================
 
         response = requests.get(
-            f"{API_URL}&page=1&per_page=300",
+            f"{API_URL}&page=1",
             headers=headers,
             verify=False,
             timeout=30
         )
 
-        print("STATUS:", response.status_code, flush=True)
+        print("STATUS PAGINA 1:", response.status_code, flush=True)
 
         if response.status_code != 200:
 
-            print("ERROR API", flush=True)
+            print("ERROR PAGINA 1", flush=True)
 
             if cache_datos:
                 return cache_datos
@@ -69,18 +73,84 @@ def obtener_datos():
 
         data = response.json()
 
-        todos = data.get("data", {}).get("entries", [])
+        total_paginas = data.get("meta", {}).get("last_page", 1)
+
+        print(f"TOTAL PAGINAS: {total_paginas}", flush=True)
+
+        entries = data.get("data", {}).get("entries", [])
+
+        todos.extend(entries)
+
+        # =========================
+        # DEMAS PAGINAS
+        # =========================
+
+        for page in range(2, total_paginas + 1):
+
+            intentos = 0
+
+            while intentos < 3:
+
+                try:
+
+                    print(f"Consultando página {page}", flush=True)
+
+                    response = requests.get(
+                        f"{API_URL}&page={page}",
+                        headers=headers,
+                        verify=False,
+                        timeout=30
+                    )
+
+                    print(f"STATUS PAGINA {page}: {response.status_code}", flush=True)
+
+                    if response.status_code == 429:
+
+                        print("RATE LIMIT - esperando...", flush=True)
+
+                        time.sleep(10)
+
+                        intentos += 1
+
+                        continue
+
+                    if response.status_code != 200:
+
+                        print(f"ERROR PAGINA {page}", flush=True)
+
+                        break
+
+                    data = response.json()
+
+                    entries = data.get("data", {}).get("entries", [])
+
+                    print(f"REGISTROS PAGINA {page}: {len(entries)}", flush=True)
+
+                    todos.extend(entries)
+
+                    # pausa normal
+                    time.sleep(5)
+
+                    break
+
+                except Exception as e:
+
+                    print(f"ERROR PAGINA {page}: {e}", flush=True)
+
+                    intentos += 1
+
+                    time.sleep(5)
 
         cache_datos = todos
         ultima_actualizacion = time.time()
 
-        print(f"TOTAL REGISTROS: {len(todos)}", flush=True)
+        print(f"TOTAL REGISTROS FINAL: {len(todos)}", flush=True)
 
         return todos
 
     except Exception as e:
 
-        print("ERROR:", str(e), flush=True)
+        print("ERROR GENERAL:", str(e), flush=True)
 
         if cache_datos:
             return cache_datos
