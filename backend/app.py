@@ -37,6 +37,17 @@ ultima_actualizacion = 0
 
 def obtener_datos():
 
+    """
+    Consulta la API de EpiCollect y obtiene todos los registros
+    disponibles del formulario de instalación de UPS.
+
+    La función implementa paginación automática y cache local
+    para reducir el número de consultas realizadas a la API.
+
+    Returns:
+        list: Lista de registros obtenidos desde EpiCollect.
+    """
+
     global cache_datos
     global ultima_actualizacion
 
@@ -175,6 +186,20 @@ def obtener_datos():
 
 
 def generar_excel(seleccionados=None):
+
+    """
+    Genera informes técnicos en formato Excel a partir de los
+    registros seleccionados por el usuario.
+
+    También descarga e inserta automáticamente las evidencias
+    fotográficas asociadas a cada registro.
+
+    Args:
+        seleccionados (list): Lista de identificadores UUID.
+
+    Returns:
+        BytesIO: Archivo ZIP con los informes generados.
+    """
         
     try:
 
@@ -766,6 +791,16 @@ def generar_excel(seleccionados=None):
 @app.route("/generar", methods=["POST"])
 def generar():
 
+    """
+    Endpoint encargado de generar informes técnicos.
+
+    Recibe una lista de identificadores de registros y
+    devuelve un archivo ZIP con los informes generados.
+
+    Returns:
+        Response: Archivo ZIP descargable.
+    """
+
     try:
         data = request.json
         seleccionados = data.get("ids", [])
@@ -806,7 +841,18 @@ def generar():
 @app.route("/datos", methods=["GET"])
 def datos():
 
+    """
+    Endpoint encargado de consultar registros disponibles.
+
+    Devuelve una versión simplificada de los datos obtenidos
+    desde EpiCollect para ser consumidos por el frontend.
+
+    Returns:
+    JSON: Lista de registros disponibles.
+    """
+
     datos = obtener_datos()
+    
 
     datos_livianos = []
 
