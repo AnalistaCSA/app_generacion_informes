@@ -1,123 +1,70 @@
-# Generador de Informes Técnicos para Instalación de UPS
+# Getting Started with Create React App
 
-## Descripción del proyecto
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-El Generador de Informes Técnicos para Instalación de UPS es una aplicación web desarrollada para automatizar la generación de informes técnicos a partir de la información recolectada en EpiCollect5 durante procesos de instalación de sistemas UPS.
+## Available Scripts
 
-El sistema permite consultar registros almacenados en EpiCollect, seleccionar uno o varios formularios diligenciados por los técnicos de campo y generar automáticamente informes en formato Excel con evidencia fotográfica y datos técnicos.
+In the project directory, you can run:
 
-## Problema que resuelve
+### `npm start`
 
-Antes del desarrollo del sistema, la generación de informes técnicos se realizaba manualmente, lo que generaba:
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-* Retrasos en la entrega de informes.
-* Duplicidad de trabajo.
-* Errores de digitación.
-* Dificultad para consolidar evidencias fotográficas.
-* Baja eficiencia en el proceso de documentación técnica.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-La solución desarrollada automatiza el proceso completo de generación de informes.
+### `npm test`
 
----
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-## Arquitectura General
+### `npm run build`
 
-EpiCollect5 → Backend Flask (Render) → Frontend React (Netlify) → Usuario Final
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Flujo de información
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-1. El técnico registra la información en EpiCollect5.
-2. El backend consulta los registros mediante la API de EpiCollect.
-3. El frontend muestra los registros disponibles.
-4. El usuario selecciona uno o varios registros.
-5. El backend genera automáticamente los informes.
-6. El usuario descarga los archivos generados.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
----
+### `npm run eject`
 
-## Tecnologías utilizadas
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-### Frontend
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-* React
-* JavaScript
-* CSS
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-### Backend
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-* Python
-* Flask
-* OpenPyXL
-* Requests
+## Learn More
 
-### Infraestructura
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-* GitHub
-* Netlify
-* Render
-* EpiCollect5
+To learn React, check out the [React documentation](https://reactjs.org/).
 
----
+### Code Splitting
 
-## Estructura del proyecto
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-```text
-frontend/
-├── public/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── services/
-│   └── styles/
+### Analyzing the Bundle Size
 
-backend/
-├── data/
-├── app.py
-└── requirements.txt
-```
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-## Instalación local
+### Making a Progressive Web App
 
-### Clonar repositorio
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-```bash
-git clone https://github.com/AnalistaCSA/app_generacion_informes.git
-```
+### Advanced Configuration
 
-### Backend
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-```bash
-cd backend
-pip install -r requirements.txt
-python app.py
-```
+### Deployment
 
-### Frontend
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-```bash
-cd frontend
-npm install
-npm start
-```
+### `npm run build` fails to minify
 
-## Variables de entorno
-
-Ejemplo:
-
-```env
-API_URL=https://five.epicollect.net/api/export/entries/...
-```
-
-## Producción
-
-### Frontend
-
-https://generador-de-informes-csa.netlify.app/
-
-### Backend
-
-https://app-generacion-informes.onrender.com/datos
-
-## Autor
-
-Proyecto desarrollado como trabajo académico para la automatización de generación de informes técnicos de instalación de UPS.
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

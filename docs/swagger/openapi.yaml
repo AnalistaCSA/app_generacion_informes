@@ -1,0 +1,42 @@
+openapi: 3.0.0
+
+info:
+  title: API Generador de Informes UPS
+  description: API para consulta de registros EpiCollect y generación automática de informes técnicos.
+  version: 1.0.0
+
+servers:
+  - url: https://app-generacion-informes.onrender.com
+
+paths:
+
+  /datos:
+    get:
+      summary: Obtener registros desde EpiCollect
+      description: Consulta los registros almacenados en EpiCollect y devuelve información resumida para el frontend.
+      responses:
+        '200':
+          description: Lista de registros obtenida correctamente
+
+  /generar:
+    post:
+      summary: Generar informes
+      description: Genera informes Excel para los registros seleccionados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        '200':
+          description: Archivo ZIP generado correctamente
+
+        '500':
+          description: Error durante la generación
