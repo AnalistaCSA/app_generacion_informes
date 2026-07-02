@@ -51,8 +51,8 @@ def obtener_datos():
     global cache_datos
     global ultima_actualizacion
 
-    # cache 1 hora
-    if time.time() - ultima_actualizacion < 3600 and cache_datos:
+    # cache 10 minutos
+    if time.time() - ultima_actualizacion < 600 and cache_datos:
         print("Usando cache", flush=True)
         return cache_datos
 
