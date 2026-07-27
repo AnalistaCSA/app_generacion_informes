@@ -805,3 +805,52 @@ def obtener_datos_dashboard():
         })
 
     return datos_livianos
+
+# ============================
+# RUTAS DEL MODULO SENA
+# ============================
+
+def registrar_rutas(app):
+
+    @app.route("/datos", methods=["GET"])
+    def datos():
+
+        return jsonify(obtener_datos_dashboard())
+
+
+    @app.route("/generar", methods=["POST"])
+    def generar():
+
+        try:
+
+            data = request.json
+            seleccionados = data.get("ids", [])
+
+            archivo = generar_excel(seleccionados)
+
+            if not archivo:
+                return {"error": "No se generaron archivos"}, 500
+
+            if isinstance(archivo, tuple):
+
+                nombre, buffer = archivo
+
+                return send_file(
+                    BytesIO(buffer),
+                    as_attachment=True,
+                    download_name=nombre,
+                    mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+
+            return send_file(
+                archivo,
+                as_attachment=True,
+                download_name="informes.zip",
+                mimetype="application/zip"
+            )
+
+        except Exception as e:
+
+            print(traceback.format_exc())
+
+            return {"error": str(e)}, 500
