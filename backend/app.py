@@ -1,4 +1,4 @@
-from . import sena_db
+import sena_db
 import requests
 from flask import Flask, request, send_file
 from flask_cors import CORS
