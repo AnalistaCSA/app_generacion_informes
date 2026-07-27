@@ -1,40 +1,17 @@
 import sena_db
-import requests
 from flask import Flask, request, send_file
 from flask_cors import CORS
-import zipfile
-import time
 from io import BytesIO
-from openpyxl import load_workbook
-import urllib3
-from openpyxl.drawing.image import Image
 import os
-import json
-import re
 import traceback
-from tempfile import NamedTemporaryFile
 from flask import jsonify
-import requests
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-API_URL = "https://five.epicollect.net/api/export/entries/csa-ups-instalacion?form_ref=fff4776480684a35b8765ec74e7c14f8_69c54ba08a99d"
-
-with open("backend/data/tecnicos.json", "r", encoding="utf-8") as f:
-    tecnicos = json.load(f)
-
-headers = {
-    "User-Agent": "Mozilla/5.0"
-}
 
 app = Flask(__name__)
 
 print("VERSION NUEVA ACTIVADA")
 
 CORS(app)
-
-cache_datos = []
-ultima_actualizacion = 0
 
 @app.route("/generar", methods=["POST"])
 def generar():
@@ -89,38 +66,7 @@ def generar():
 @app.route("/datos", methods=["GET"])
 def datos():
 
-    """
-    Endpoint encargado de consultar registros disponibles.
-
-    Devuelve una versión simplificada de los datos obtenidos
-    desde EpiCollect para ser consumidos por el frontend.
-
-    Returns:
-    JSON: Lista de registros disponibles.
-    """
-
-    datos = sena_db.obtener_datos()
-    
-
-    datos_livianos = []
-
-    for item in datos:
-
-        datos_livianos.append({
-            "ec5_uuid": item.get("ec5_uuid"),
-            "title": item.get("title"),
-            "created_at": item.get("created_at"),
-            "7_CIUDAD": item.get("7_CIUDAD"),
-            "8_DEPARTAMENTO": item.get("8_DEPARTAMENTO"),
-            "66_CAPACIDAD_UPS_KVA": item.get("66_CAPACIDAD_UPS_KVA"),
-            "69_NUMERO_DE_SERIE_D": item.get("69_NUMERO_DE_SERIE_D"),
-            "11_CODIGO_TECNICO": item.get("11_CODIGO_TECNICO"),
-            "5_NOMBRE_SEDE": item.get("5_NOMBRE_SEDE"),
-            "6_DIRECCION": item.get("6_DIRECCION"),
-            "2_ID_SEDE": item.get("2_ID_SEDE")
-        })
-
-    return jsonify(datos_livianos)
+    return jsonify(sena_db.obtener_datos_dashboard())
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

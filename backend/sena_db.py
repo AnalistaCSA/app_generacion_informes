@@ -781,3 +781,27 @@ def generar_excel(seleccionados=None):
         print(traceback.format_exc())
 
         raise e
+
+def obtener_datos_dashboard():
+
+    datos = obtener_datos()
+
+    datos_livianos = []
+
+    for item in datos:
+
+        datos_livianos.append({
+            "ec5_uuid": item.get("ec5_uuid"),
+            "title": item.get("title"),
+            "created_at": item.get("created_at"),
+            "7_CIUDAD": item.get("7_CIUDAD"),
+            "8_DEPARTAMENTO": item.get("8_DEPARTAMENTO"),
+            "66_CAPACIDAD_UPS_KVA": item.get("66_CAPACIDAD_UPS_KVA"),
+            "69_NUMERO_DE_SERIE_D": item.get("69_NUMERO_DE_SERIE_D"),
+            "11_CODIGO_TECNICO": item.get("11_CODIGO_TECNICO"),
+            "5_NOMBRE_SEDE": item.get("5_NOMBRE_SEDE"),
+            "6_DIRECCION": item.get("6_DIRECCION"),
+            "2_ID_SEDE": item.get("2_ID_SEDE")
+        })
+
+    return datos_livianos
