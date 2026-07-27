@@ -7,7 +7,7 @@ function LoginPage() {
 
     const handleLogin = (user) => {
         localStorage.setItem("usuario", JSON.stringify(user));
-        navigate("/dashboard", { replace: true });
+        navigate("/selection", { replace: true });
     };
 
     return <Login onLogin={handleLogin} />;

@@ -15,6 +15,10 @@ function Dashboard() {
     const [paginaActual, setPaginaActual] = useState(1);
     const registrosPorPagina = 50;
 
+    const irASelection = () => {
+        navigate("/selection");
+    }
+
 
     //se valida datos
     useEffect(() =>{
@@ -178,6 +182,7 @@ function Dashboard() {
     return (
     <div class="contenedor-Dashboard">
         <div class="contenedor-boton">
+            <button class="boton-cierre-sesion" onClick={irASelection}>Volver a Proyectos</button>
             <button class="boton-cierre-sesion" onClick={logout}>Cerrar Sesión</button>
         </div>
         <h1 class="titulo-Dashboard" >INFORMES DE INSTALACIÓN</h1>
