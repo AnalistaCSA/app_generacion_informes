@@ -1,4 +1,4 @@
-import sena_db
+from backend import sena_db
 import requests
 from flask import Flask, request, send_file
 from flask_cors import CORS
@@ -35,155 +35,6 @@ CORS(app)
 
 cache_datos = []
 ultima_actualizacion = 0
-
-def obtener_datos():
-
-    """
-    Consulta la API de EpiCollect y obtiene todos los registros
-    disponibles del formulario de instalación de UPS.
-
-    La función implementa paginación automática y cache local
-    para reducir el número de consultas realizadas a la API.
-
-    Returns:
-        list: Lista de registros obtenidos desde EpiCollect.
-    """
-
-    global cache_datos
-    global ultima_actualizacion
-
-    # cache 10 minutos
-    if time.time() - ultima_actualizacion < 600 and cache_datos:
-        print("Usando cache", flush=True)
-        return cache_datos
-
-    try:
-
-        todos = []
-
-        # =========================
-        # PRIMERA PAGINA
-        # =========================
-
-        response = requests.get(
-            f"{API_URL}&page=1",
-            headers=headers,
-            verify=False,
-            timeout=30
-        )
-
-        print("STATUS PAGINA 1:", response.status_code, flush=True)
-
-        if response.status_code != 200:
-
-            print("ERROR PAGINA 1", flush=True)
-
-            if cache_datos:
-                return cache_datos
-
-            return []
-
-        data = response.json()
-
-        total_paginas = data.get("meta", {}).get("last_page", 1)
-
-        print(f"TOTAL PAGINAS: {total_paginas}", flush=True)
-
-        entries = data.get("data", {}).get("entries", [])
-
-        todos.extend(entries)
-
-        # =========================
-        # DEMAS PAGINAS
-        # =========================
-
-        for page in range(2, total_paginas + 1):
-
-            pagina_cargada = False
-            intentos = 0
-
-            while not pagina_cargada and intentos < 10:
-
-                try:
-
-                    print(f"Consultando página {page}", flush=True)
-
-                    response = requests.get(
-                        f"{API_URL}&page={page}",
-                        headers=headers,
-                        verify=False,
-                        timeout=30
-                    )
-
-                    print(f"STATUS PAGINA {page}: {response.status_code}", flush=True)
-
-                    # RATE LIMIT
-                    if response.status_code == 429:
-
-                        intentos += 1
-
-                        print(
-                            f"RATE LIMIT PAGINA {page} - intento {intentos}",
-                            flush=True
-                        )
-
-                        time.sleep(20)
-
-                        continue
-
-                    # ERROR GENERAL
-                    if response.status_code != 200:
-
-                        print(f"ERROR PAGINA {page}", flush=True)
-
-                        break
-
-                    data = response.json()
-
-                    entries = data.get("data", {}).get("entries", [])
-
-                    print(
-                        f"REGISTROS PAGINA {page}: {len(entries)}",
-                        flush=True
-                    )
-
-                    todos.extend(entries)
-
-                    print(
-                        f"TOTAL ACUMULADO: {len(todos)}",
-                        flush=True
-                    )
-
-                    pagina_cargada = True
-
-                    time.sleep(5)
-
-                except Exception as e:
-
-                    intentos += 1
-
-                    print(
-                        f"ERROR PAGINA {page} - intento {intentos}: {e}",
-                        flush=True
-                    )
-
-                    time.sleep(10)
-
-        cache_datos = todos
-        ultima_actualizacion = time.time()
-
-        print(f"TOTAL REGISTROS FINAL: {len(todos)}", flush=True)
-
-        return todos
-
-    except Exception as e:
-
-        print("ERROR GENERAL:", str(e), flush=True)
-
-        if cache_datos:
-            return cache_datos
-
-        return []
 
 @app.route("/generar", methods=["POST"])
 def generar():
@@ -248,7 +99,7 @@ def datos():
     JSON: Lista de registros disponibles.
     """
 
-    datos = obtener_datos()
+    datos = sena_db.obtener_datos()
     
 
     datos_livianos = []
