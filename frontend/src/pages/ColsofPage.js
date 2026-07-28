@@ -1,27 +1,316 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/SelectionPage.css";
+import { obtenerDatosColsof } from "../services/api";
+import tecnicos from "../data/tecnicos.json";
+import "../styles/dashboardPages.css";
 
-function ColsofPage() {
+function Dashboard() {
+
     const navigate = useNavigate();
+    const [datos, setDatos] = useState([]);
+    const [seleccionados, setSeleccionados] =useState([]);
+    const [cargando, setCargando] = useState(false);
+    const [busqueda, setBusqueda] = useState("");
+    const [filtroTecnico, setFiltroTecnico] = useState("")
+    const [paginaActual, setPaginaActual] = useState(1);
+    const registrosPorPagina = 50;
+
+    const irASelection = () => {
+        navigate("/selection");
+    }
+
+
+    //se valida datos
+    useEffect(() =>{
+        const usuario = localStorage.getItem("usuario");
+
+        if(!usuario){
+            navigate("/", {replace: true});
+        };
+    }, [navigate]);
+
+    //se traen datos de epicoollect
+    useEffect(() =>{
+        const cargarDatos = async () => {
+            const res = await obtenerDatosColsof("colsof");
+            setDatos(res);
+        };
+
+        cargarDatos();
+    }, []);
+
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, filtroTecnico]);
+
     // Cerrar Sesión
     const logout =() =>{
         localStorage.removeItem("usuario");
         navigate("/",{replace: true})
     };
-    const irASelection = () => {
-        navigate("/selection");
+
+    //caja de selección
+    const handleSelection = (item) => {
+        const id = item.ec5_uuid;
+
+        if (!id) {
+            console.error("ID inválido:", item);
+            return;
+        }
+
+        setSeleccionados(prev => {
+            if (prev.includes(id)) {
+                return prev.filter(i => i !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
+    };
+
+    //traer nombre de tecnico
+
+    const traerIdTecnico = (id) =>{
+        const tecnico = tecnicos.find(t => t.id === id);
+        return tecnico ? tecnico.nombre : "No encontrado"
     }
 
-    return (
-        <div className="selection-page">
-            <div class="contenedor-boton">
-                <button class="boton-cierre-sesion" onClick={irASelection}>Volver a Proyectos</button>
-                <button class="boton-cierre-sesion" onClick={logout}>Cerrar Sesión</button>
-            </div>
-            <h1>Página Colsof</h1>
-            <p>Pagina en construcción...</p>
-        </div>
-    );
-}
+    //boton descargar todos los archivos
+    const descargarTodos = async () => {
+        setCargando(true);
 
-export default ColsofPage;
+        try {
+            const response = await fetch("https://app-generacion-informes.onrender.com/colsof/generar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ids: [] })
+            });
+
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+
+            const contentDisposition = response.headers.get("Content-Disposition");
+            let nombreArchivo = "informes.zip";
+
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="(.+)"/);
+                if (match) {
+                    nombreArchivo = match[1];
+                }
+            }
+
+            a.download = nombreArchivo;
+            a.click();
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setCargando(false); // 🔥 clave
+        }
+    };
+
+    //boton descargar seleccionados
+    const descargarSeleccionados = async () => {
+        setCargando(true);
+
+        try {
+            const response = await fetch("https://app-generacion-informes.onrender.com/colsof/generar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ids: seleccionados })
+            });
+
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+
+            const contentDisposition = response.headers.get("Content-Disposition");
+            let nombreArchivo = "informes.zip";
+
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="(.+)"/);
+                if (match) {
+                    nombreArchivo = match[1];
+                }
+            }
+
+            a.download = nombreArchivo;
+            a.click();
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setCargando(false); // 🔥 clave
+        }
+    };
+
+    //filtro y cuadro de busqueda
+    const datosFiltrados = datos.filter(item => {
+        const texto = busqueda.toLowerCase();
+        
+        const coincideBusqueda =
+            item.title?.toLowerCase().includes(texto) ||
+            item["2_SBAN"]?.toLowerCase().includes(texto) ||
+            item["3_NOMBRE_OFICINA"]?.toLowerCase().includes(texto) ||
+            item["38_NUMERO_DE_SERIE_U"]?.toLowerCase().includes(texto) ||
+            item["8_DIRECCION"]?.toLowerCase().includes(texto);
+
+        const nombreTecnico = traerIdTecnico(item["10_CODIGO_DEL_TECNIC"]);
+
+        const coincideTecnico =
+            filtroTecnico === "" || nombreTecnico === filtroTecnico;
+
+        return coincideBusqueda && coincideTecnico;
+    });
+
+    const indiceInicio = (paginaActual - 1) * registrosPorPagina;
+    const indiceFin = paginaActual * registrosPorPagina;
+
+    const datosPaginados = datosFiltrados.slice(indiceInicio, indiceFin);
+
+    const totalPaginas = Math.ceil(datosFiltrados.length / registrosPorPagina);
+    
+
+    return (
+    <div class="contenedor-Dashboard">
+        <div class="contenedor-boton">
+            <button class="boton-cierre-sesion" onClick={irASelection}>Volver a Proyectos</button>
+            <button class="boton-cierre-sesion" onClick={logout}>Cerrar Sesión</button>
+        </div>
+        <h1 class="titulo-Dashboard" >INFORMES DE INSTALACIÓN</h1>
+        <p class="texto-dashboard">Bienvenido al sistema para generacion de informes UPS via Epicollect</p>
+        <a href="https://five.epicollect.net/project/ups-colsof/data" target="_blank" rel="noopener noreferrer" class="link_epicollect">
+            Ver base en Epicollect
+        </a>
+        
+
+        <h2 class="titulo2-Dashboard">Listado de Informes</h2>
+        
+        <div className="contenedor-filtros">
+            <input
+                type="text"
+                placeholder="Buscar por sede, s/n de ups o dirección..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                className="input-busqueda"
+            />
+
+            <select
+                value={filtroTecnico}
+                onChange={(e) => setFiltroTecnico(e.target.value)}
+                className="select-filtro"
+            >
+                <option value="">Todos los técnicos</option>
+                {tecnicos.map(t => (
+                    <option key={t.id} value={t.nombre}>
+                        {t.nombre}
+                    </option>
+                ))}
+            </select>
+        </div>
+
+        <div class="contenedor-tabla">
+            {datos.length === 0 ? (
+                <p>Cargando datos...</p>
+            ) : (
+                <table border="1" cellPadding="10" style={{ marginTop: "20px", borderCollapse: "collapse" }}>
+                    <thead class="casilla-titulos">
+                        <tr>
+                            <th class="columna-seleccion">Selección</th>
+                            <th>Sban</th>
+                            <th>Fecha</th>
+                            <th>Ciudad</th>
+                            <th>Departamento</th>
+                            <th>Capacidad UPS</th>
+                            <th>S/N de UPS</th>
+                            <th class="columna-tecnico">Técnico</th>
+                            <th>Nombre Sede</th>
+                            <th class="columna-direccion">Dirección</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {datosPaginados.map((item, index) => (
+                            <tr key={index}>
+                                <td>                                    
+                                    <input
+                                        class="checkbox"
+                                        type="checkbox" 
+                                        checked={seleccionados.includes(item.ec5_uuid)}
+                                        onChange={() => handleSelection(item)}
+                                    />                                    
+                                </td>
+                                <td>{item.title}</td>
+                                <td>{item.created_at.split("T")[0]}</td>
+                                <td>{item["6_CIUDAD"]}</td>
+                                <td>{item["7_DEPARTAMENTO"]}</td>
+                                <td>{item["34_CAPACIDAD_DE_UPS"]+" KVA"}</td>
+                                <td>{item["38_NUMERO_DE_SERIE_U"]}</td>
+                                <td>{traerIdTecnico(item["10_CODIGO_DEL_TECNIC"])}</td>
+                                <td>{item["3_NOMBRE_OFICINA"]}</td>
+                                <td>{item["8_DIRECCION"]}</td>
+                            </tr>                        
+                        ))}
+                    </tbody>
+                </table>              
+            )} 
+        </div>
+        <div style={{ marginTop: "20px" }}>
+            <button 
+                onClick={() => setPaginaActual(paginaActual - 1)} 
+                disabled={paginaActual === 1}
+            >
+                Anterior
+            </button>
+
+            {/*Botones numerados */}
+            {Array.from({ length: totalPaginas }, (_, i) => (
+                <button
+                    key={i}
+                    onClick={() => setPaginaActual(i + 1)}
+                    style={{
+                        margin: "0 5px",
+                        fontWeight: paginaActual === i + 1 ? "bold" : "normal"
+                    }}
+                >
+                    {i + 1}
+                </button>
+            ))}
+
+            <button 
+                onClick={() => setPaginaActual(paginaActual + 1)} 
+                disabled={paginaActual === totalPaginas}
+            >
+                Siguiente
+            </button>
+        </div>
+        <div class="contenedor-botones-descarga">
+            <button class="boton-descarga" onClick={descargarTodos} disabled={cargando}>
+                {cargando ? "Generando..." : "Descargar Todos"}
+            </button>
+
+            <button class="boton-descarga" onClick={descargarSeleccionados} disabled={cargando}>
+                {cargando ? "Generando..." : "Descargar Seleccionados"}
+            </button>
+        </div>
+        <p class="total-informes">
+            Total de informes: {datosFiltrados.length}
+        </p>
+        {cargando && (
+            <p class="texto-carga">
+                ⏳ Generando y descargando informes, por favor espera...
+            </p>
+        )}
+    </div>
+    );
+};
+
+export default Dashboard;

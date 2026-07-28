@@ -11,6 +11,7 @@ print("VERSION NUEVA ACTIVADA")
 CORS(app)
 
 sena_db.registrar_rutas(app)
+colsof_db.registrar_rutas(app)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
