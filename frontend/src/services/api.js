@@ -1,9 +1,9 @@
-const API_URL = "https://app-generacion-informes.onrender.com/datos";
+const API_URL = "https://app-generacion-informes.onrender.com";
 
-export const obtenerDatos = async () => {
+export const obtenerDatos = async (modulo = "sena") => {
     try {
 
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}/${modulo}/datos`);
 
         console.log("STATUS:", response.status);
 

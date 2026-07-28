@@ -32,7 +32,7 @@ function Dashboard() {
     //se traen datos de epicoollect
     useEffect(() =>{
         const cargarDatos = async () => {
-            const res = await obtenerDatos();
+            const res = await obtenerDatos("sena");
             setDatos(res);
         };
 
@@ -79,7 +79,7 @@ function Dashboard() {
         setCargando(true);
 
         try {
-            const response = await fetch("https://app-generacion-informes.onrender.com/generar", {
+            const response = await fetch("https://app-generacion-informes.onrender.com/sena/generar", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -118,7 +118,7 @@ function Dashboard() {
         setCargando(true);
 
         try {
-            const response = await fetch("https://app-generacion-informes.onrender.com/generar", {
+            const response = await fetch("https://app-generacion-informes.onrender.com/sena/generar", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
