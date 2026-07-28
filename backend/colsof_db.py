@@ -320,10 +320,7 @@ def generar_excel(seleccionados=None):
                 dt_generales["S20"] = "X"
             else:
                 dt_generales["U20"] = "X"
-            if item.get("27_NUMERO_DE_BANCO_D") == "SI":
-                dt_generales["S21"] = "X"
-            else:
-                dt_generales["U21"] = "X"
+            dt_generales["S21"] = item.get("27_NUMERO_DE_BANCO_D")
 
             dt_generales["C24"] = item.get("29_TIENE_TARJETA_SNM")
             dt_generales["H24"] = item.get("30_NUMERO_DE_SERIE_D")
@@ -403,7 +400,7 @@ def generar_excel(seleccionados=None):
                 dt_generales["M36"] = item.get("147_TENSION_EN_SOPOR")
                 dt_generales["S36"] = item.get("149_TENSIN_CARGA_VDC")
                 med_salida_ups["F100"] = item.get("151_REFERENCIA_DE_BA")
-                dt_generales["S21"] = item.get("152_CANTIDAD_DE_BATE")
+                med_salida_ups["F102"] = item.get("152_CANTIDAD_DE_BATE")
                 med_salida_ups["F104"] = item.get("153_HORA_INICIO_PRUE")
                 med_salida_ups["F105"] = item.get("154_HORA_FINALIZACIO")
                 dt_generales["C37"] = item.get("156_CONCLUSIONES_DE_")
