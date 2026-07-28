@@ -813,13 +813,13 @@ def obtener_datos_dashboard():
 def registrar_rutas(app):
 
     @app.route("/sena/datos", methods=["GET"])
-    def datos():
+    def datos_sena():
 
         return jsonify(obtener_datos_dashboard())
 
 
     @app.route("/sena/generar", methods=["POST"])
-    def generar():
+    def generar_sena():
 
         try:
 

@@ -356,13 +356,13 @@ def obtener_datos_dashboard():
 def registrar_rutas(app):
 
     @app.route("/colsof/datos", methods=["GET"])
-    def datos():
+    def datos_colsof():
 
         return jsonify(obtener_datos_dashboard())
 
 
     @app.route("/colsof/generar", methods=["POST"])
-    def generar():
+    def generar_colsof():
 
         try:
 
