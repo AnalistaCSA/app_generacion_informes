@@ -249,6 +249,24 @@ def generar_excel(seleccionados=None):
             print("Procesando: ", item.get("title"))
 
             wb = load_workbook("formato/formato_informe_ups.xlsx")
+            oficinas = load_workbook(r"data/oficinas_ba.xlsx")
+            hoja = oficinas.active
+
+            buscar_sban = str(item.get("2_SBAN")).strip()
+
+            n_oficina = ""
+            ciudad = ""
+            departamento = ""
+            direccion = ""
+
+            for fila in hoja.iter_rows(min_row=2, values_only=True):
+                if str(fila[0]).strip() == buscar_sban:
+                    n_oficina = fila[1]
+                    ciudad = fila[2]
+                    departamento = fila[3]
+                    direccion = fila[4]
+                    break
+            
 
             dt_generales = wb["DATOS GENERALES"]
             evi_mantenimiento = wb["EVIDENCIA DEL MANTENIMIENTO"]
@@ -257,333 +275,332 @@ def generar_excel(seleccionados=None):
             novedades = wb["NOVEDADES"]
 
             # ***********  Completar datos en HOJA DATOS GENERALES" ***************
-            dt_generales["B9"] = item.get("3_NOMBRE_OFICINA")
+            dt_generales["B9"] = n_oficina
             dt_generales["S9"] = item.get("2_SBAN")
-            dt_generales["B10"] = item.get("5_FECHA")
-            dt_generales["B11"] = item.get("6_CIUDAD")
-            dt_generales["B12"] = item.get("7_DEPARTAMENTO")
-            dt_generales["M10"] = item.get("4_NUMERO_DE_RUTINA")
-            dt_generales["M11"] = item.get("8_DIRECCION")
-            dt_generales["M12"] = item.get("9_ENCARGADO")
-            dt_generales["S15"] = item.get("12_TIENE_AIRE_ACONDI")
-            dt_generales["U15"] = item.get("13_TEMPERATURA_AMBIE")
+            dt_generales["B10"] = item.get("4_FECHA")
+            dt_generales["B11"] = ciudad
+            dt_generales["B12"] = departamento
+            dt_generales["M10"] = item.get("3_NUMERO_DE_RUTINA")
+            dt_generales["M11"] = direccion
+            dt_generales["M12"] = item.get("5_ENCARGADO")
+            dt_generales["S15"] = item.get("8_TIENE_AIRE_ACONDIC")
+            dt_generales["U15"] = item.get("9_TEMPERATURA_AMBIEN")
 
             for tecnico in tecnicos:
                     
-                if tecnico.get("id") == item.get("10_CODIGO_DEL_TECNIC"):
+                if tecnico.get("id") == item.get("6_CODIGO_DEL_TECNICO"):
                     dt_generales["C40"] = tecnico.get("nombre")
                     dt_generales["C41"] = tecnico.get("documento")
                     dt_generales["C42"] = tecnico.get("telefono")
                     break
 
-            if item.get("15_EL_EQUIPO_ESTA_EN") == "SI":
+            if item.get("11_EL_EQUIPO_ESTA_EN") == "SI":
                 dt_generales["C18"] = "X"
             else:
                 dt_generales["F18"] = "X"
-            if item.get("16_ACCESIBILIDAD_A_E") == "SI":
+            if item.get("12_ACCESIBILIDAD_A_E") == "SI":
                 dt_generales["C19"] = "X"
             else:
                 dt_generales["F19"] = "X"
-            if item.get("17_ESTADO_DE_CARCASA") == "SI":
+            if item.get("13_ESTADO_DE_CARCASA") == "SI":
                 dt_generales["C20"] = "X"
             else:
                 dt_generales["F20"] = "X"
-            if item.get("18_ALARMAS_ACTIVAS") == "SI":
+            if item.get("14_ALARMAS_ACTIVAS") == "SI":
                 dt_generales["C21"] = "X"
-                dt_generales["C22"] = item.get("19_INDIQUE_CODIGO_AL")
+                dt_generales["C22"] = item.get("15_INDIQUE_CODIGO_AL")
             else:
                 dt_generales["F21"] = "X"
-            if item.get("20_CONEXIONES_DE_ENT") == "SI":
+            if item.get("16_CONEXIONES_DE_ENT") == "SI":
                 dt_generales["M18"] = "X"
             else:
                 dt_generales["O18"] = "X"
-            if item.get("21_CONEXIONES_DE_SAL") == "SI":
+            if item.get("17_CONEXIONES_DE_SAL") == "SI":
                 dt_generales["M19"] = "X"
             else:
                 dt_generales["O19"] = "X"
-            if item.get("22_EQUIPO_EN_GESTION") == "SI":
+            if item.get("18_EQUIPO_EN_GESTION") == "SI":
                 dt_generales["M20"] = "X"
             else:
                 dt_generales["O20"] = "X"
-            if item.get("23_CONDUCTORES_EN_BU") == "SI":
+            if item.get("19_CONDUCTORES_EN_BU") == "SI":
                 dt_generales["M21"] = "X"
             else:
                 dt_generales["O21"] = "X"
-            if item.get("24_CONEXION_DE_BATER") == "SI":
+            if item.get("20_CONEXION_DE_BATER") == "SI":
                 dt_generales["S18"] = "X"
             else:
                 dt_generales["U18"] = "X"
-            if item.get("25_CONEXION_A_TIERRA") == "SI":
+            if item.get("21_CONEXION_A_TIERRA") == "SI":
                 dt_generales["S19"] = "X"
             else:
                 dt_generales["U19"] = "X"
-            if item.get("26_TIENE_PATCH_CORD_") == "SI":
+            if item.get("22_TIENE_PATCH_CORD_") == "SI":
                 dt_generales["S20"] = "X"
             else:
                 dt_generales["U20"] = "X"
-            dt_generales["S21"] = item.get("27_NUMERO_DE_BANCO_D")
+            dt_generales["S21"] = item.get("23_NUMERO_DE_BANCO_D")
 
-            dt_generales["C24"] = item.get("29_TIENE_TARJETA_SNM")
-            dt_generales["H24"] = item.get("30_NUMERO_DE_SERIE_D")
-            dt_generales["N24"] = item.get("31_NUMERO_DE_MAC")
-            dt_generales["S24"] = item.get("32_CONFIGURACION_IP_")
-            dt_generales["J15"] = item.get("34_CAPACIDAD_DE_UPS")
-            dt_generales["B15"] = item.get("35_MARCA_UPS")
-            dt_generales["F15"] = item.get("36_MODELO_UPS")
-            dt_generales["M15"] = item.get("37_NUMERO_DE_FASES")
-            dt_generales["P15"] = item.get("38_NUMERO_DE_SERIE_U")
+            dt_generales["C24"] = item.get("25_TIENE_TARJETA_SNM")
+            dt_generales["H24"] = item.get("26_NUMERO_DE_SERIE_D")
+            dt_generales["N24"] = item.get("27_NUMERO_DE_MAC")
+            dt_generales["S24"] = item.get("28_CONFIGURACION_IP_")
+            dt_generales["J15"] = item.get("30_CAPACIDAD_DE_UPS")
+            dt_generales["B15"] = item.get("31_MARCA_UPS")
+            dt_generales["F15"] = item.get("32_MODELO_UPS")
+            dt_generales["M15"] = item.get("33_NUMERO_DE_FASES")
+            dt_generales["P15"] = item.get("34_NUMERO_DE_SERIE_U")
 
-            if item.get("39_TIPO_DE_UPS") == "MONOFASICA":                
-                med_entradas_ups["C2"] = item.get("39_TIPO_DE_UPS")
+            if item.get("35_TIPO_DE_UPS") == "MONOFASICA":                
+                med_entradas_ups["C2"] = item.get("35_TIPO_DE_UPS")
                 
                 #VALOR MEDICIONES DE ENTRADA EN HOJA DATOS GENERALES
                 dt_generales["D29"] = "N/A"
                 dt_generales["F29"] = "N/A"
                 dt_generales["H29"] = "N/A" 
-                dt_generales["D30"] = item.get("42_DIGITE_VALOR_TENS")
+                dt_generales["D30"] = item.get("38_DIGITE_VALOR_TENS")
                 dt_generales["F30"] = "N/A"
                 dt_generales["H30"] = "N/A"
-                dt_generales["C31"] = item.get("44_DIGITE_VALOR_MEDI")
-                dt_generales["L29"] = item.get("46_DIGITE_EL_VALOR_M")
+                dt_generales["C31"] = item.get("40_DIGITE_VALOR_MEDI")
+                dt_generales["L29"] = item.get("42_DIGITE_EL_VALOR_M")
                 dt_generales["N29"] = "N/A"
                 dt_generales["Q29"] = "N/A"
-                dt_generales["S29"] = item.get("48_DIGITAR_EL_VALOR_")
-                dt_generales["U29"] = item.get("50_DIGITAR_VALOR_ENT")
+                dt_generales["S29"] = item.get("44_DIGITAR_EL_VALOR_")
+                dt_generales["U29"] = item.get("46_DIGITAR_VALOR_ENT")
 
                 #FOTOS MEDICONES DE ENTRADA EN HOJA MEDICIONES DE ENTRADA
-                insertar_imagen(med_entradas_ups, item, "41_FOTO_TENSION_ENTR", "A4")
+                insertar_imagen(med_entradas_ups, item, "37_FOTO_TENSION_ENTR", "A4")
                 med_entradas_ups["C4"] = "N/A"
                 med_entradas_ups["E4"] = "N/A"
                 med_entradas_ups["A22"] = "N/A"
                 med_entradas_ups["C22"] = "N/A"
                 med_entradas_ups["E22"] = "N/A"
-                insertar_imagen(med_entradas_ups, item, "43_FOTO_TENSION_ENTR", "A40")
-                insertar_imagen(med_entradas_ups, item, "45_FOTO_CORRIENTE_EN", "C40")
+                insertar_imagen(med_entradas_ups, item, "39_FOTO_TENSION_ENTR", "A40")
+                insertar_imagen(med_entradas_ups, item, "41_FOTO_CORRIENTE_EN", "C40")
                 med_entradas_ups["E40"] = "N/A"
                 med_entradas_ups["A58"] = "N/A"
-                insertar_imagen(med_entradas_ups, item, "47_FOTO_CORRIENTE_EN", "C58")
-                insertar_imagen(med_entradas_ups, item, "49_FOTO_CORREINTE_EN", "E58")
-                med_entradas_ups["A86"] = item.get("51_OBERVACIONES_ENTR")
+                insertar_imagen(med_entradas_ups, item, "43_FOTO_CORRIENTE_EN", "C58")
+                insertar_imagen(med_entradas_ups, item, "45_FOTO_CORREINTE_EN", "E58")
+                med_entradas_ups["A86"] = item.get("47_OBERVACIONES_ENTR")
 
                 #VALOR MEDICIONES DE SALIDA EN HOJA DATOS GENERALES
-                dt_generales["D34"] = item.get("53_DIGITE_VALOR_MEDI")
+                dt_generales["D34"] = item.get("49_DIGITE_VALOR_MEDI")
                 dt_generales["D33"] = "N/A"
                 dt_generales["F33"] = "N/A"
                 dt_generales["H33"] = "N/A"
                 dt_generales["F34"] = "N/A"
                 dt_generales["H34"] = "N/A"
-                dt_generales["M33"] = item.get("55_DIGITE_VALOR_MEDI")
-                dt_generales["L30"] = item.get("57_DIGITE_EL_VALOR_M")
+                dt_generales["M33"] = item.get("51_DIGITE_VALOR_MEDI")
+                dt_generales["L30"] = item.get("53_DIGITE_EL_VALOR_M")
                 dt_generales["N30"] = "N/A"
                 dt_generales["Q30"] = "N/A"
-                dt_generales["S30"] = item.get("59_DIGITAR_EL_VALOR_")
-                dt_generales["U30"] = item.get("59_DIGITAR_EL_VALOR_")
+                dt_generales["S30"] = item.get("55_DIGITAR_EL_VALOR_")
+                dt_generales["U30"] = item.get("57_DIGITAR_VALOR_SAL")
 
                 #FOTOS MEDICONES DE SALIDA EN HOJA MEDICIONES DE SALIDA
-                insertar_imagen(med_salida_ups, item, "52_FOTO_TENSION_SALI", "A4")
+                insertar_imagen(med_salida_ups, item, "48_FOTO_TENSION_SALI", "A4")
                 med_salida_ups["C4"] = "N/A"
                 med_salida_ups["E4"] = "N/A"
                 med_salida_ups["A22"] = "N/A"
                 med_salida_ups["C22"] = "N/A"
                 med_salida_ups["E22"] = "N/A"
-                insertar_imagen(med_salida_ups, item, "54_FOTO_TENSION_SALI", "A40")
-                insertar_imagen(med_salida_ups, item, "56_FOTO_CORRIENTE_SA", "C40")
+                insertar_imagen(med_salida_ups, item, "50_FOTO_TENSION_SALI", "A40")
+                insertar_imagen(med_salida_ups, item, "52_FOTO_CORRIENTE_SA", "C40")
                 med_salida_ups["E40"] = "N/A"
                 med_salida_ups["A58"] = "N/A"
-                insertar_imagen(med_salida_ups, item, "58_FOTO_CORRIENTE_SA", "C58")
-                insertar_imagen(med_salida_ups, item, "60_FOTO_CORRIENTE_SA", "E58")
-                med_salida_ups["A109"] = item.get("62_OBERVACIONES_SALI")
+                insertar_imagen(med_salida_ups, item, "54_FOTO_CORRIENTE_SA", "C58")
+                insertar_imagen(med_salida_ups, item, "56_FOTO_CORRIENTE_SA", "E58")
+                med_salida_ups["A109"] = item.get("58_OBERVACIONES_SALI")
 
-            elif item.get("39_TIPO_DE_UPS") == "BIFASICA":
-                med_entradas_ups["C2"] = item.get("39_TIPO_DE_UPS")
+            elif item.get("35_TIPO_DE_UPS") == "BIFASICA":
+                med_entradas_ups["C2"] = item.get("35_TIPO_DE_UPS")
                 #VALOR MEDICIONES DE ENTRADA EN HOJA DATOS GENERALES
-                dt_generales["D29"] = item.get("66_DIGITE_MEDIDA_TEN")
+                dt_generales["D29"] = item.get("62_DIGITE_MEDIDA_TEN")
                 dt_generales["F29"] = "N/A"
                 dt_generales["H29"] = "N/A" 
-                dt_generales["L29"] = item.get("68_DIGITE_VALOR_CORR")
-                dt_generales["N29"] = item.get("70_DIGITE_VALOR_CORR")
+                dt_generales["L29"] = item.get("64_DIGITE_VALOR_CORR")
+                dt_generales["N29"] = item.get("66_DIGITE_VALOR_CORR")
                 dt_generales["Q29"] = "N/A"
                 dt_generales["D30"] = "N/A"
                 dt_generales["F30"] = "N/A"
                 dt_generales["H30"] = "N/A"
                 dt_generales["C31"] = "N/A"
                 dt_generales["S29"] = "N/A"
-                dt_generales["U29"] = item.get("72_DIGITAR_VALOR_ENT")
+                dt_generales["U29"] = item.get("68_DIGITAR_VALOR_ENT")
 
                 #FOTOS MEDICONES DE ENTRADA EN HOJA MEDICIONES DE ENTRADA
                 med_entradas_ups["A4"] = "N/A"
                 med_entradas_ups["C4"] = "N/A"
                 med_entradas_ups["E4"] = "N/A"
-                insertar_imagen(med_entradas_ups, item, "65_FOTO_TENSION_ENTR", "A22")
+                insertar_imagen(med_entradas_ups, item, "61_FOTO_TENSION_ENTR", "A22")
                 med_entradas_ups["C22"] = "N/A"
                 med_entradas_ups["E22"] = "N/A"
                 med_entradas_ups["A40"] = "N/A"                
-                insertar_imagen(med_entradas_ups, item, "67_FOTO_CORRIENTE_EN", "C40")
-                insertar_imagen(med_entradas_ups, item, "69_FOTO_CORRIENTE_EN", "E40")
+                insertar_imagen(med_entradas_ups, item, "63_FOTO_CORRIENTE_EN", "C40")
+                insertar_imagen(med_entradas_ups, item, "65_FOTO_CORRIENTE_EN", "E40")
                 med_entradas_ups["A58"] = "N/A"
                 med_entradas_ups["C58"] = "N/A"
-                insertar_imagen(med_entradas_ups, item, "71_FOTO_CORREINTE_EN", "E58")
-                med_entradas_ups["A86"] = item.get("73_OBERVACIONES_ENTR")
+                insertar_imagen(med_entradas_ups, item, "67_FOTO_CORREINTE_EN", "E58")
+                med_entradas_ups["A86"] = item.get("69_OBERVACIONES_ENTR")
 
                 #VALOR MEDICIONES DE SALIDA EN HOJA DATOS GENERALES
-                dt_generales["D34"] = item.get("75_DIGITAR_VALOR_MED")
-                dt_generales["F34"] = item.get("77_DIGITAR_VALOR_MED")
+                dt_generales["D34"] = item.get("71_DIGITAR_VALOR_MED")
+                dt_generales["F34"] = item.get("73_DIGITAR_VALOR_MED")
                 dt_generales["H34"] = "N/A"
-                dt_generales["D33"] = item.get("79_DIGITE_MEDIDA_TEN")
+                dt_generales["D33"] = item.get("75_DIGITE_MEDIDA_TEN")
                 dt_generales["F33"] = "N/A"
                 dt_generales["H33"] = "N/A"
-                dt_generales["M33"] = item.get("81_DIGITE_VALOR_MEDI")
-                dt_generales["L30"] = item.get("83_DIGITE_VALOR_CORR")
-                dt_generales["N30"] = item.get("85_DIGITE_VALOR_CORR")
+                dt_generales["M33"] = item.get("77_DIGITE_VALOR_MEDI")
+                dt_generales["L30"] = item.get("79_DIGITE_VALOR_CORR")
+                dt_generales["N30"] = item.get("81_DIGITE_VALOR_CORR")
                 dt_generales["Q30"] = "N/A"
-                dt_generales["S30"] = item.get("87_DIGITAR_EL_VALOR_")
-                dt_generales["U30"] = item.get("89_DIGITAR_VALOR_SAL")
+                dt_generales["S30"] = item.get("83_DIGITAR_EL_VALOR_")
+                dt_generales["U30"] = item.get("85_DIGITAR_VALOR_SAL")
 
                 #FOTOS MEDICONES DE SALIDA EN HOJA MEDICIONES DE SALIDA
-                insertar_imagen(med_salida_ups, item, "74_FOTO_TENSION_DE_S", "A4")
-                insertar_imagen(med_salida_ups, item, "76_FOTO_TENSION_DE_S", "C4")
+                insertar_imagen(med_salida_ups, item, "70_FOTO_TENSION_DE_S", "A4")
+                insertar_imagen(med_salida_ups, item, "72_FOTO_TENSION_DE_S", "C4")
                 med_salida_ups["E4"] = "N/A"
-                insertar_imagen(med_salida_ups, item, "78_FOTO_TENSION_SALI", "A22")
+                insertar_imagen(med_salida_ups, item, "74_FOTO_TENSION_SALI", "A22")
                 med_salida_ups["C22"] = "N/A"
                 med_salida_ups["E22"] = "N/A"
-                insertar_imagen(med_salida_ups, item, "80_FOTO_TENSION_SALI", "A40")
-                insertar_imagen(med_salida_ups, item, "82_FOTO_CORRIENTE_SA", "C40")
-                insertar_imagen(med_salida_ups, item, "84_FOTO_CORRIENTE_SA", "E40")
+                insertar_imagen(med_salida_ups, item, "76_FOTO_TENSION_SALI", "A40")
+                insertar_imagen(med_salida_ups, item, "78_FOTO_CORRIENTE_SA", "C40")
+                insertar_imagen(med_salida_ups, item, "80_FOTO_CORRIENTE_SA", "E40")
                 med_salida_ups["A58"] = "N/A"
-                insertar_imagen(med_salida_ups, item, "86_FOTO_CORRIENTE_SA", "C58")
-                insertar_imagen(med_salida_ups, item, "88_FOTO_CORREINTE_SA", "E58")
-                med_salida_ups["A109"] = item.get("90_OBERVACIONES_SALI")
+                insertar_imagen(med_salida_ups, item, "82_FOTO_CORRIENTE_SA", "C58")
+                insertar_imagen(med_salida_ups, item, "84_FOTO_CORREINTE_SA", "E58")
+                med_salida_ups["A109"] = item.get("86_OBERVACIONES_SALI")
 
             else: #TRIFASICA
-                med_entradas_ups["C2"] = item.get("39_TIPO_DE_UPS")
+                med_entradas_ups["C2"] = item.get("35_TIPO_DE_UPS")
 
                 #VALOR MEDICIONES DE ENTRADA EN HOJA DATOS GENERALES
-                dt_generales["D30"] = item.get("94_DIGITAR_VALOR_MED")
-                dt_generales["F30"] = item.get("96_DIGITAR_VALOR_MED")
-                dt_generales["H30"] = item.get("98_DIGITAR_VALOR_MED")
-                dt_generales["D29"] = item.get("100_DIGITE_MEDIDA_TE")
-                dt_generales["F29"] = item.get("102_DIGITE_MEDIDA_TE")
-                dt_generales["H29"] = item.get("104_DIGITE_MEDIDA_TE")
-                dt_generales["L29"] = item.get("108_DIGITE_VALOR_COR")
-                dt_generales["N29"] = item.get("110_DIGITE_VALOR_COR")
-                dt_generales["Q29"] = item.get("112_DIGITE_VALOR_COR")
-                dt_generales["C31"] = item.get("106_DIGITE_VALOR_MED")
-                dt_generales["S29"] = item.get("114_DIGITAR_EL_VALOR")
-                dt_generales["U29"] = item.get("116_DIGITAR_VALOR_EN")
+                dt_generales["D30"] = item.get("90_DIGITAR_VALOR_MED")
+                dt_generales["F30"] = item.get("92_DIGITAR_VALOR_MED")
+                dt_generales["H30"] = item.get("94_DIGITAR_VALOR_MED")
+                dt_generales["D29"] = item.get("96_DIGITE_MEDIDA_TEN")
+                dt_generales["F29"] = item.get("98_DIGITE_MEDIDA_TEN")
+                dt_generales["H29"] = item.get("100_DIGITE_MEDIDA_TE")
+                dt_generales["L29"] = item.get("104_DIGITE_VALOR_COR")
+                dt_generales["N29"] = item.get("106_DIGITE_VALOR_COR")
+                dt_generales["Q29"] = item.get("108_DIGITE_VALOR_COR")
+                dt_generales["C31"] = item.get("102_DIGITE_VALOR_MED")
+                dt_generales["S29"] = item.get("110_DIGITAR_EL_VALOR")
+                dt_generales["U29"] = item.get("112_DIGITAR_VALOR_EN")
 
                 #FOTOS MEDICONES DE ENTRADA EN HOJA MEDICIONES DE ENTRADA
-                insertar_imagen(med_entradas_ups, item, "93_FOTO_TENSION_DE_E", "A4")
-                insertar_imagen(med_entradas_ups, item, "95_FOTO_TENSION_DE_E", "C4")
-                insertar_imagen(med_entradas_ups, item, "97_FOTO_TENSION_DE_E", "E4")
-                insertar_imagen(med_entradas_ups, item, "99_FOTO_TENSION_ENTR", "A22")
-                insertar_imagen(med_entradas_ups, item, "101_FOTO_TENSION_ENT", "C22")
-                insertar_imagen(med_entradas_ups, item, "103_FOTO_TENSION_ENT", "E22")
-                insertar_imagen(med_entradas_ups, item, "105_FOTO_TENSION_ENT", "A40")               
-                insertar_imagen(med_entradas_ups, item, "107_FOTO_CORRIENTE_E", "C40")
-                insertar_imagen(med_entradas_ups, item, "109_FOTO_CORRIENTE_E", "E40")
-                insertar_imagen(med_entradas_ups, item, "111_FOTO_CORRIENTE_E", "A58")
-                insertar_imagen(med_entradas_ups, item, "113_FOTO_CORRIENTE_E", "C58")
-                insertar_imagen(med_entradas_ups, item, "115_FOTO_CORREINTE_E", "E58")
-                med_entradas_ups["A86"] = item.get("117_OBERVACIONES_ENT")
+                insertar_imagen(med_entradas_ups, item, "89_FOTO_TENSION_DE_E", "A4")
+                insertar_imagen(med_entradas_ups, item, "91_FOTO_TENSION_DE_E", "C4")
+                insertar_imagen(med_entradas_ups, item, "93_FOTO_TENSION_DE_E", "E4")
+                insertar_imagen(med_entradas_ups, item, "95_FOTO_TENSION_ENTR", "A22")
+                insertar_imagen(med_entradas_ups, item, "97_FOTO_TENSION_ENTR", "C22")
+                insertar_imagen(med_entradas_ups, item, "99_FOTO_TENSION_ENTR", "E22")
+                insertar_imagen(med_entradas_ups, item, "101_FOTO_TENSION_ENT", "A40")               
+                insertar_imagen(med_entradas_ups, item, "103_FOTO_CORRIENTE_E", "C40")
+                insertar_imagen(med_entradas_ups, item, "105_FOTO_CORRIENTE_E", "E40")
+                insertar_imagen(med_entradas_ups, item, "107_FOTO_CORRIENTE_E", "A58")
+                insertar_imagen(med_entradas_ups, item, "109_FOTO_CORRIENTE_E", "C58")
+                insertar_imagen(med_entradas_ups, item, "111_FOTO_CORREINTE_E", "E58")
+                med_entradas_ups["A86"] = item.get("113_OBERVACIONES_ENT")
 
                 #VALOR MEDICIONES DE SALIDA EN HOJA DATOS GENERALES
-                dt_generales["D34"] = item.get("119_DIGITAR_VALOR_ME")
-                dt_generales["F34"] = item.get("121_DIGITAR_VALOR_ME")
-                dt_generales["H34"] = item.get("123_DIGITAR_VALOR_ME")
-                dt_generales["D33"] = item.get("125_DIGITE_MEDIDA_TE")
-                dt_generales["F33"] = item.get("127_DIGITE_MEDIDA_TE")
-                dt_generales["H33"] = item.get("129_DIGITE_MEDIDA_TE")
-                dt_generales["M33"] = item.get("131_DIGITE_VALOR_MED")
-                dt_generales["L30"] = item.get("133_DIGITE_VALOR_COR")
-                dt_generales["N30"] = item.get("135_DIGITE_VALOR_COR")
-                dt_generales["Q30"] = item.get("137_DIGITE_VALOR_COR")
-                dt_generales["S30"] = item.get("139_DIGITAR_EL_VALOR")
-                dt_generales["U30"] = item.get("141_DIGITAR_VALOR_SA")
+                dt_generales["D34"] = item.get("115_DIGITAR_VALOR_ME")
+                dt_generales["F34"] = item.get("117_DIGITAR_VALOR_ME")
+                dt_generales["H34"] = item.get("119_DIGITAR_VALOR_ME")
+                dt_generales["D33"] = item.get("121_DIGITE_MEDIDA_TE")
+                dt_generales["F33"] = item.get("123_DIGITE_MEDIDA_TE")
+                dt_generales["H33"] = item.get("125_DIGITE_MEDIDA_TE")
+                dt_generales["M33"] = item.get("127_DIGITE_VALOR_MED")
+                dt_generales["L30"] = item.get("129_DIGITE_VALOR_COR")
+                dt_generales["N30"] = item.get("131_DIGITE_VALOR_COR")
+                dt_generales["Q30"] = item.get("133_DIGITE_VALOR_COR")
+                dt_generales["S30"] = item.get("135_DIGITAR_EL_VALOR")
+                dt_generales["U30"] = item.get("137_DIGITAR_VALOR_SA")
 
                 #FOTOS MEDICONES DE SALIDA EN HOJA MEDICIONES DE SALIDA
-                insertar_imagen(med_salida_ups, item, "118_FOTO_TENSION_DE_", "A4")
-                insertar_imagen(med_salida_ups, item, "120_FOTO_TENSION_DE_", "C4")
-                insertar_imagen(med_salida_ups, item, "122_FOTO_TENSION_DE_", "E4")
-                insertar_imagen(med_salida_ups, item, "124_FOTO_TENSION_SAL", "A22")
-                insertar_imagen(med_salida_ups, item, "126_FOTO_TENSION_SAL", "C22")
-                insertar_imagen(med_salida_ups, item, "128_FOTO_TENSION_SAL", "E22")
-                insertar_imagen(med_salida_ups, item, "130_FOTO_TENSION_SAL", "A40")
-                insertar_imagen(med_salida_ups, item, "132_FOTO_CORRIENTE_S", "C40")
-                insertar_imagen(med_salida_ups, item, "134_FOTO_CORRIENTE_S", "E40")
-                insertar_imagen(med_salida_ups, item, "136_FOTO_CORRIENTE_S", "A58")
-                insertar_imagen(med_salida_ups, item, "138_FOTO_CORRIENTE_S", "C58")
-                insertar_imagen(med_salida_ups, item, "140_FOTO_CORREINTE_S", "E58")
-                med_salida_ups["A109"] = item.get("142_OBERVACIONES_SAL")
+                insertar_imagen(med_salida_ups, item, "114_FOTO_TENSION_DE_", "A4")
+                insertar_imagen(med_salida_ups, item, "116_FOTO_TENSION_DE_", "C4")
+                insertar_imagen(med_salida_ups, item, "118_FOTO_TENSION_DE_", "E4")
+                insertar_imagen(med_salida_ups, item, "120_FOTO_TENSION_SAL", "A22")
+                insertar_imagen(med_salida_ups, item, "122_FOTO_TENSION_SAL", "C22")
+                insertar_imagen(med_salida_ups, item, "124_FOTO_TENSION_SAL", "E22")
+                insertar_imagen(med_salida_ups, item, "126_FOTO_TENSION_SAL", "A40")
+                insertar_imagen(med_salida_ups, item, "128_FOTO_CORRIENTE_S", "C40")
+                insertar_imagen(med_salida_ups, item, "130_FOTO_CORRIENTE_S", "E40")
+                insertar_imagen(med_salida_ups, item, "132_FOTO_CORRIENTE_S", "A58")
+                insertar_imagen(med_salida_ups, item, "134_FOTO_CORRIENTE_S", "C58")
+                insertar_imagen(med_salida_ups, item, "136_FOTO_CORREINTE_S", "E58")
+                med_salida_ups["A109"] = item.get("138_OBERVACIONES_SAL")
 
-            if item.get("143_LAS_LECTURAS_COR") == "SI":
+            if item.get("139_LAS_LECTURAS_COR") == "SI":
                 dt_generales["P34"] = "X"
             else:
                 dt_generales["U34"] = "X"
 
             #PRUEBAS Y SOPORTE
-            dt_generales["E36"] = item.get("145_TENSION_INICIAL_")
-            dt_generales["M36"] = item.get("147_TENSION_EN_SOPOR")
-            dt_generales["S36"] = item.get("149_TENSIN_CARGA_VDC")
-            med_salida_ups["F100"] = item.get("151_REFERENCIA_DE_BA")
-            med_salida_ups["F102"] = item.get("152_CANTIDAD_DE_BATE")
-            med_salida_ups["F104"] = item.get("153_HORA_INICIO_PRUE")
-            med_salida_ups["F105"] = item.get("154_HORA_FINALIZACIO")
-            dt_generales["C37"] = item.get("156_CONCLUSIONES_DE_")
+            dt_generales["E36"] = item.get("141_TENSION_INICIAL_")
+            dt_generales["M36"] = item.get("143_TENSION_EN_SOPOR")
+            dt_generales["S36"] = item.get("145_TENSIN_CARGA_VDC")
+            med_salida_ups["F100"] = item.get("147_REFERENCIA_DE_BA")
+            med_salida_ups["F102"] = item.get("148_CANTIDAD_DE_BATE")
+            med_salida_ups["F104"] = item.get("149_HORA_INICIO_PRUE")
+            med_salida_ups["F105"] = item.get("150_HORA_FINALIZACIO")
+            dt_generales["C37"] = item.get("152_CONCLUSIONES_DE_")
 
             #FOTOS PRUEBAS Y SOPORTE
-            insertar_imagen(med_salida_ups, item, "146_TENSION_DE_BATER","A76")
-            insertar_imagen(med_salida_ups, item, "148_TENSION_BATERIAS","C76")
-            insertar_imagen(med_salida_ups, item, "150_TENSIN_CARGA_VDC","E76")
+            insertar_imagen(med_salida_ups, item, "142_TENSION_DE_BATER","A76")
+            insertar_imagen(med_salida_ups, item, "144_TENSION_BATERIAS","C76")
+            insertar_imagen(med_salida_ups, item, "146_TENSIN_CARGA_VDC","E76")
 
             #REGISTRO Y EVIDENCIA FOTOGRAFICA
-            insertar_imagen(evi_mantenimiento, item, "158_Panoramica_Ubica","A4")
-            insertar_imagen(evi_mantenimiento, item, "159_Vista_Frontal_de","B4")
-            insertar_imagen(evi_mantenimiento, item, "160_Placa_con_Serial","C4")
-            insertar_imagen(evi_mantenimiento, item, "161_Vista_Interna_Ge","D4")
+            insertar_imagen(evi_mantenimiento, item, "154_Panoramica_Ubica","A4")
+            insertar_imagen(evi_mantenimiento, item, "155_Vista_Frontal_de","B4")
+            insertar_imagen(evi_mantenimiento, item, "156_Placa_con_Serial","C4")
+            insertar_imagen(evi_mantenimiento, item, "157_Vista_Interna_Ge","D4")
 
-            insertar_imagen(evi_mantenimiento, item, "162_Panoramica_Ubica","A23")
-            insertar_imagen(evi_mantenimiento, item, "163_Vista_Frontal_de","B23")
-            insertar_imagen(evi_mantenimiento, item, "164_Placa_con_Activo","C23")
-            insertar_imagen(evi_mantenimiento, item, "165_Vista_Interna_Ge","D23")
+            insertar_imagen(evi_mantenimiento, item, "158_Panoramica_Ubica","A23")
+            insertar_imagen(evi_mantenimiento, item, "159_Vista_Frontal_de","B23")
+            insertar_imagen(evi_mantenimiento, item, "160_Placa_con_Activo","C23")
+            insertar_imagen(evi_mantenimiento, item, "161_Vista_Interna_Ge","D23")
 
-            insertar_imagen(evi_mantenimiento, item, "166_DPS_de_Salida_UP","A41")
-            insertar_imagen(evi_mantenimiento, item, "167_Reemplazo_de_Ven","B41")
-            insertar_imagen(evi_mantenimiento, item, "168_Display_de_la_UP","C41")
-            insertar_imagen(evi_mantenimiento, item, "169_Display_de_la_UP","D41")
+            insertar_imagen(evi_mantenimiento, item, "162_DPS_de_Salida_UP","A41")
+            insertar_imagen(evi_mantenimiento, item, "163_Reemplazo_de_Ven","B41")
+            insertar_imagen(evi_mantenimiento, item, "164_Display_de_la_UP","C41")
+            insertar_imagen(evi_mantenimiento, item, "165_Display_de_la_UP","D41")
 
-            insertar_imagen(evi_mantenimiento, item, "170_Placa_con_Serial","A59")
-            insertar_imagen(evi_mantenimiento, item, "171_Actualizacion_Ve","B59")
-            insertar_imagen(evi_mantenimiento, item, "172_Evidencia_de_Ges","C59")
-            insertar_imagen(evi_mantenimiento, item, "173_Evidencia_de_Ges","D59")
+            insertar_imagen(evi_mantenimiento, item, "166_Placa_con_Serial","A59")
+            insertar_imagen(evi_mantenimiento, item, "167_Actualizacion_Ve","B59")
+            insertar_imagen(evi_mantenimiento, item, "168_Evidencia_de_Ges","C59")
+            insertar_imagen(evi_mantenimiento, item, "169_Evidencia_de_Ges","D59")
 
-            insertar_imagen(evi_mantenimiento, item, "174_Panoramica_Stick","A77")
-            insertar_imagen(evi_mantenimiento, item, "175_Placa_de_Manteni","B77")
-            insertar_imagen(evi_mantenimiento, item, "176_Marquilla_de_Ide","C77")
+            insertar_imagen(evi_mantenimiento, item, "170_Panoramica_Stick","A77")
+            insertar_imagen(evi_mantenimiento, item, "171_Placa_de_Manteni","B77")
+            insertar_imagen(evi_mantenimiento, item, "172_Marquilla_de_Ide","C77")
 
-            evi_mantenimiento["A94"] = item.get("177_OBSERVACIONES")
+            evi_mantenimiento["A94"] = item.get("173_OBSERVACIONES")
 
             #novedades
-            insertar_imagen(novedades, item, "179_NOVEDAD_1","A4")
-            insertar_imagen(novedades, item, "180_NOVEDAD_2","C4")
-            insertar_imagen(novedades, item, "181_NOVEDAD_3","E4")
+            insertar_imagen(novedades, item, "175_NOVEDAD_1","A4")
+            insertar_imagen(novedades, item, "176_NOVEDAD_2","C4")
+            insertar_imagen(novedades, item, "177_NOVEDAD_3","E4")
 
-            if item.get("182_NOVEDADES_AMBIEN") == "OTRA":
-                novedades["D21"] = item.get("183_OTRAS_NOVEDADES_")
+            if item.get("178_NOVEDADES_AMBIEN") == "OTRA":
+                novedades["D21"] = item.get("179_OTRAS_NOVEDADES_")
             else:
-                novedades["D21"] = item.get("182_NOVEDADES_AMBIEN")
+                novedades["D21"] = item.get("178_NOVEDADES_AMBIEN")
 
-            if item.get("184_NOVEDADES_DE_UPS") == "OTRA":
-                novedades["D22"] = item.get("185_OTRAS_NOVEDADES_")
+            if item.get("180_NOVEDADES_DE_UPS") == "OTRA":
+                novedades["D22"] = item.get("181_OTRAS_NOVEDADES_")
             else:
-                novedades["D22"] = item.get("184_NOVEDADES_DE_UPS")
+                novedades["D22"] = item.get("180_NOVEDADES_DE_UPS")
 
             #Generacion de archivos
             sban = item.get("2_SBAN", "sin_sban")
-            sede = item.get("3_NOMBRE_OFICINA", "sin_sede")
             equipo = item.get("34_CAPACIDAD_DE_UPS", "sin_equipo")
             sn = item.get("38_NUMERO_DE_SERIE_U", "sin_sn")
 
-            nombre_archivo = f"informe_mantenimiento_UPS_SBAN_{sban}_{sede}_{equipo}_KVA_SN_{sn}.xlsx"
+            nombre_archivo = f"informe_mantenimiento_UPS_SBAN_{sban}_{equipo}_KVA_SN_{sn}.xlsx"
 
             # limpiar TODO lo problemático
             nombre_archivo = re.sub(r'[^\w\-.]', '_', nombre_archivo)
@@ -631,19 +648,37 @@ def obtener_datos_dashboard():
 
     datos_livianos = []
 
+    oficinas = load_workbook(r"data/oficinas_ba.xlsx")
+    hoja = oficinas.active
+
+    buscar_sban = str(item.get("2_SBAN")).strip()
+
+    n_oficina = ""
+    ciudad = ""
+    departamento = ""
+    direccion = ""
+
+    for fila in hoja.iter_rows(min_row=2, values_only=True):
+        if str(fila[0]).strip() == buscar_sban:
+            n_oficina = fila[1]
+            ciudad = fila[2]
+            departamento = fila[3]
+            direccion = fila[4]
+            break
+
     for item in datos:
 
         datos_livianos.append({
             "ec5_uuid": item.get("ec5_uuid"),
             "title": item.get("title"),
             "created_at": item.get("created_at"),
-            "6_CIUDAD": item.get("6_CIUDAD"),
-            "7_DEPARTAMENTO": item.get("7_DEPARTAMENTO"),
-            "34_CAPACIDAD_DE_UPS": item.get("34_CAPACIDAD_DE_UPS"),
-            "38_NUMERO_DE_SERIE_U": item.get("38_NUMERO_DE_SERIE_U"),
-            "10_CODIGO_DEL_TECNIC": item.get("10_CODIGO_DEL_TECNIC"),
-            "3_NOMBRE_OFICINA": item.get("3_NOMBRE_OFICINA"),
-            "8_DIRECCION": item.get("8_DIRECCION"),
+            "6_CIUDAD": ciudad,
+            "7_DEPARTAMENTO": departamento,
+            "34_CAPACIDAD_DE_UPS": item.get("30_CAPACIDAD_DE_UPS"),
+            "38_NUMERO_DE_SERIE_U": item.get("34_NUMERO_DE_SERIE_U"),
+            "10_CODIGO_DEL_TECNIC": item.get("6_CODIGO_DEL_TECNICO"),
+            "3_NOMBRE_OFICINA": n_oficina,
+            "8_DIRECCION": direccion,
             "2_SBAN": item.get("2_SBAN")
         })
 
