@@ -600,10 +600,10 @@ def generar_excel(seleccionados=None):
 
             #Generacion de archivos
             sban = item.get("2_SBAN", "sin_sban")
-            equipo = item.get("34_CAPACIDAD_DE_UPS", "sin_equipo")
-            sn = item.get("38_NUMERO_DE_SERIE_U", "sin_sn")
+            equipo = item.get("30_CAPACIDAD_DE_UPS", "sin_equipo")
+            sn = item.get("34_NUMERO_DE_SERIE_U", "sin_sn")
 
-            nombre_archivo = f"informe_mantenimiento_UPS_SBAN_{sban}_{equipo}_KVA_SN_{sn}.xlsx"
+            nombre_archivo = f"informe_mantenimiento_UPS_SBAN_{sban}_{ciudad}_{equipo}_KVA_SN_{sn}.xlsx"
 
             # limpiar TODO lo problemático
             nombre_archivo = re.sub(r'[^\w\-.]', '_', nombre_archivo)
