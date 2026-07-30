@@ -22,6 +22,9 @@ API_URL = "https://five.epicollect.net/api/export/entries/ups-colsof?form_ref=05
 with open("backend/data/tecnicos.json", "r", encoding="utf-8") as f:
     tecnicos = json.load(f)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+base_oficinas = os.path.join(BASE_DIR, "data", "oficinas_ba.xlsx")
+
 headers = {
     "User-Agent": "Mozilla/5.0"
 }
@@ -249,7 +252,7 @@ def generar_excel(seleccionados=None):
             print("Procesando: ", item.get("title"))
 
             wb = load_workbook("formato/formato_informe_ups.xlsx")
-            oficinas = load_workbook(r"data/oficinas_ba.xlsx")
+            oficinas = load_workbook(base_oficinas)
             hoja = oficinas.active
 
             buscar_sban = str(item.get("2_SBAN")).strip()
@@ -648,7 +651,7 @@ def obtener_datos_dashboard():
 
     datos_livianos = []
 
-    oficinas = load_workbook(r"data/oficinas_ba.xlsx")
+    oficinas = load_workbook(base_oficinas)
     hoja = oficinas.active
 
     buscar_sban = str(item.get("2_SBAN")).strip()
