@@ -255,7 +255,7 @@ def generar_excel(seleccionados=None):
             oficinas = load_workbook(base_oficinas)
             hoja = oficinas.active
 
-            buscar_sban = str(item.get("2_SBAN")).strip()
+            buscar_sban = int(item.get("2_SBAN"))
 
             n_oficina = ""
             ciudad = ""
@@ -263,7 +263,7 @@ def generar_excel(seleccionados=None):
             direccion = ""
 
             for fila in hoja.iter_rows(min_row=2, values_only=True):
-                if str(fila[0]).strip() == buscar_sban:
+                if fila[0] == buscar_sban:
                     n_oficina = fila[1]
                     ciudad = fila[2]
                     departamento = fila[3]
@@ -654,7 +654,7 @@ def obtener_datos_dashboard():
     oficinas = load_workbook(base_oficinas)
     hoja = oficinas.active
 
-    buscar_sban = str(item.get("2_SBAN")).strip()
+    buscar_sban = int(item.get("2_SBAN"))
 
     n_oficina = ""
     ciudad = ""
@@ -662,7 +662,7 @@ def obtener_datos_dashboard():
     direccion = ""
 
     for fila in hoja.iter_rows(min_row=2, values_only=True):
-        if str(fila[0]).strip() == buscar_sban:
+        if fila[0] == buscar_sban:
             n_oficina = fila[1]
             ciudad = fila[2]
             departamento = fila[3]
