@@ -412,7 +412,7 @@ def generar_excel(seleccionados=None):
                 med_salida_ups["E40"] = "N/A"
                 med_salida_ups["A58"] = "N/A"
                 insertar_imagen(med_salida_ups, item, "54_FOTO_CORRIENTE_SA", "C58")
-                insertar_imagen(med_salida_ups, item, "56_FOTO_CORRIENTE_SA", "E58")
+                insertar_imagen(med_salida_ups, item, "56_FOTO_CORREINTE_SA", "E58")
                 med_salida_ups["A109"] = item.get("58_OBERVACIONES_SALI")
 
             elif item.get("35_TIPO_DE_UPS") == "BIFASICA":
