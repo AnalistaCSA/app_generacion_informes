@@ -651,26 +651,56 @@ def obtener_datos_dashboard():
 
     datos_livianos = []
 
-    
-    for item in datos:
+    def normalizar_sban(valor):
+        if valor is None:
+            return ""
 
-        oficinas = load_workbook(base_oficinas)
-        hoja = oficinas.active
-    
-        buscar_sban = int(item.get("2_SBAN"))
-    
-        n_oficina = ""
-        ciudad = ""
-        departamento = ""
-        direccion = ""
-    
+        texto = str(valor).strip()
+
+        try:
+            numero = float(texto)
+            if numero.is_integer():
+                return str(int(numero))
+        except (ValueError, OverflowError):
+            pass
+
+        return texto.casefold()
+
+    # Cargar y recorrer el Excel una sola vez
+    libro_oficinas = load_workbook(
+        base_oficinas,
+        read_only=True,
+        data_only=True
+    )
+
+    try:
+        hoja = libro_oficinas.active
+        oficinas_por_sban = {}
+
         for fila in hoja.iter_rows(min_row=2, values_only=True):
-            if fila[0] == buscar_sban:
-                n_oficina = fila[1]
-                ciudad = fila[2]
-                departamento = fila[3]
-                direccion = fila[4]
-                break
+            if not fila or fila[0] is None:
+                continue
+
+            clave_sban = normalizar_sban(fila[0])
+            oficinas_por_sban.setdefault(
+                clave_sban,
+                (
+                    fila[1] if len(fila) > 1 else "",
+                    fila[2] if len(fila) > 2 else "",
+                    fila[3] if len(fila) > 3 else "",
+                    fila[4] if len(fila) > 4 else ""
+                )
+            )
+    finally:
+        libro_oficinas.close()
+
+    for item in datos:
+        clave_sban = normalizar_sban(item.get("2_SBAN"))
+
+        n_oficina, ciudad, departamento, direccion = oficinas_por_sban.get(
+            clave_sban,
+            ("", "", "", "")
+        )
 
         datos_livianos.append({
             "ec5_uuid": item.get("ec5_uuid"),
